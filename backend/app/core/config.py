@@ -16,6 +16,7 @@ class Settings(BaseSettings):
     oracle_user: str | None = None
     oracle_password: str | None = None
     oracle_dsn: str | None = None
+    oracle_client_lib_dir: str | None = None
 
     @property
     def cors_origins(self) -> list[str]:

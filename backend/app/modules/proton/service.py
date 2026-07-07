@@ -7,6 +7,19 @@ from sqlalchemy.orm import Session
 from app.core.config import settings
 from app.modules.proton.models import VendedorFilial
 
+_oracle_client_initialized = False
+
+
+def init_oracle_client_if_needed() -> None:
+    global _oracle_client_initialized
+    if _oracle_client_initialized or not settings.oracle_client_lib_dir:
+        return
+
+    import oracledb
+
+    oracledb.init_oracle_client(lib_dir=settings.oracle_client_lib_dir)
+    _oracle_client_initialized = True
+
 
 @dataclass(frozen=True)
 class VendedorFilialDTO:
@@ -27,6 +40,7 @@ class ProtonService:
             return 0
 
         import oracledb
+        init_oracle_client_if_needed()
 
         query = """
             select
@@ -69,6 +83,7 @@ class ProtonService:
             return None
 
         import oracledb
+        init_oracle_client_if_needed()
 
         query = """
             select
