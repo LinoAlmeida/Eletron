@@ -97,6 +97,13 @@ Login: Master User
 Senha: 11463402000149
 ```
 
+Para redefinir uma senha local:
+
+```powershell
+cd backend
+.\.venv\Scripts\python.exe .\scripts\set_user_password.py lino.almeida 123456
+```
+
 ## Frontend
 
 Instalar dependencias e rodar:
