@@ -89,6 +89,7 @@ Endpoints iniciais:
 - `POST http://127.0.0.1:8000/api/v1/auth/login`
 - `GET http://127.0.0.1:8000/api/v1/auth/me`
 - `GET http://127.0.0.1:8000/api/v1/reservas`
+- `GET http://127.0.0.1:8000/api/v1/reservas/{reserva_id}`
 - `GET http://127.0.0.1:8000/api/v1/financeiro/caixas`
 - `GET http://127.0.0.1:8000/api/v1/financeiro/reservas/{reserva_id}/titulos`
 

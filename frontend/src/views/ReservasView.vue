@@ -4,19 +4,19 @@ import { computed, onMounted, ref } from 'vue'
 
 import {
   listarReservas,
-  listarTitulosReserva,
+  obterReservaDetalhe,
   type Reserva,
-  type Titulo,
+  type ReservaDetalhe,
 } from '../services/reservas'
 
 const reservas = ref<Reserva[]>([])
 const total = ref(0)
 const loading = ref(false)
-const loadingTitulos = ref(false)
+const loadingDetalhe = ref(false)
 const error = ref<string | null>(null)
 const search = ref('')
 const selectedReserva = ref<Reserva | null>(null)
-const titulos = ref<Titulo[]>([])
+const detalhe = ref<ReservaDetalhe | null>(null)
 
 const filteredReservas = computed(() => {
   const term = search.value.trim().toLowerCase()
@@ -56,7 +56,7 @@ async function loadReservas(): Promise<void> {
     total.value = data.total
     selectedReserva.value = data.items[0] ?? null
     if (selectedReserva.value) {
-      await loadTitulos(selectedReserva.value)
+      await loadDetalhe(selectedReserva.value)
     }
   } catch {
     error.value = 'Nao foi possivel carregar as reservas.'
@@ -65,16 +65,15 @@ async function loadReservas(): Promise<void> {
   }
 }
 
-async function loadTitulos(reserva: Reserva): Promise<void> {
+async function loadDetalhe(reserva: Reserva): Promise<void> {
   selectedReserva.value = reserva
-  loadingTitulos.value = true
+  loadingDetalhe.value = true
   try {
-    const data = await listarTitulosReserva(reserva.id)
-    titulos.value = data.items
+    detalhe.value = await obterReservaDetalhe(reserva.id)
   } catch {
-    titulos.value = []
+    detalhe.value = null
   } finally {
-    loadingTitulos.value = false
+    loadingDetalhe.value = false
   }
 }
 
@@ -136,7 +135,7 @@ onMounted(loadReservas)
                 :key="reserva.id"
                 :class="{ 'table-active': selectedReserva?.id === reserva.id }"
                 role="button"
-                @click="loadTitulos(reserva)"
+                @click="loadDetalhe(reserva)"
               >
                 <td>
                   <strong>#{{ reserva.id }}</strong>
@@ -154,24 +153,80 @@ onMounted(loadReservas)
 
       <aside class="detail-panel">
         <div class="detail-header">
-          <span>Pagamentos</span>
+          <span>Detalhe</span>
           <strong v-if="selectedReserva">Reserva #{{ selectedReserva.id }}</strong>
         </div>
 
         <div v-if="!selectedReserva" class="empty-state">Selecione uma reserva</div>
-        <div v-else-if="loadingTitulos" class="empty-state">Carregando pagamentos...</div>
-        <div v-else-if="titulos.length === 0" class="empty-state">Nenhum titulo encontrado</div>
-        <div v-else class="payment-list">
-          <div v-for="titulo in titulos" :key="titulo.id" class="payment-item">
+        <div v-else-if="loadingDetalhe" class="empty-state">Carregando detalhe...</div>
+        <div v-else-if="!detalhe" class="empty-state">Detalhe indisponivel</div>
+        <div v-else class="detail-content">
+          <div class="metrics-grid">
             <div>
-              <strong>{{ formatCurrency(titulo.valor) }}</strong>
-              <span>{{ titulo.status || '-' }}</span>
+              <span>Liquido</span>
+              <strong>{{ formatCurrency(detalhe.reserva.valor_liquido) }}</strong>
             </div>
-            <small>
-              Caixa {{ titulo.caixa_id || '-' }} · Forma {{ titulo.forma_pagamento_id || '-' }}
-            </small>
+            <div>
+              <span>Itens</span>
+              <strong>{{ formatCurrency(detalhe.totais.soma_itens) }}</strong>
+            </div>
+            <div>
+              <span>Titulos</span>
+              <strong>{{ formatCurrency(detalhe.totais.soma_titulos) }}</strong>
+            </div>
+            <div>
+              <span>Dif. titulos</span>
+              <strong>{{ formatCurrency(detalhe.totais.diferenca_titulos_liquido) }}</strong>
+            </div>
           </div>
-        </div>
+
+          <section class="detail-section">
+            <h2>Itens</h2>
+            <div v-if="detalhe.itens.length === 0" class="empty-state compact">Nenhum item</div>
+            <div v-else class="item-list">
+              <div v-for="item in detalhe.itens" :key="item.id" class="line-item">
+                <div>
+                  <strong>{{ item.produto_nome || '-' }}</strong>
+                  <small>{{ item.produto_codigo || '-' }} · {{ item.grupo_descricao || '-' }}</small>
+                </div>
+                <span>{{ item.quantidade || '0' }} x {{ formatCurrency(item.valor_unitario) }}</span>
+                <strong>{{ formatCurrency(item.valor_final) }}</strong>
+              </div>
+            </div>
+          </section>
+
+          <section class="detail-section">
+            <h2>Pagamentos</h2>
+            <div v-if="detalhe.titulos.length === 0" class="empty-state compact">Nenhum titulo</div>
+            <div v-else class="payment-list">
+              <div v-for="titulo in detalhe.titulos" :key="titulo.id" class="payment-item">
+                <div>
+                  <strong>{{ formatCurrency(titulo.valor) }}</strong>
+                  <span>{{ titulo.status || '-' }}</span>
+                </div>
+                <small>
+                  Caixa {{ titulo.caixa_id || '-' }} · Forma {{ titulo.forma_pagamento_id || '-' }}
+                </small>
+              </div>
+            </div>
+          </section>
+
+          <section class="detail-section">
+            <h2>Caixa</h2>
+            <div v-if="detalhe.caixas.length === 0" class="empty-state compact">Nenhum caixa vinculado</div>
+            <div v-else class="payment-list">
+              <div v-for="caixa in detalhe.caixas" :key="caixa.id" class="payment-item">
+                <div>
+                  <strong>Caixa #{{ caixa.id }}</strong>
+                  <span>{{ caixa.status || '-' }}</span>
+                </div>
+                <small>
+                  Pix {{ formatCurrency(caixa.total_pix) }} · Cred {{ formatCurrency(caixa.total_credito) }}
+                </small>
+              </div>
+            </div>
+          </section>
+          </div>
       </aside>
     </div>
   </section>

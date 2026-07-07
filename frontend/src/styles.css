@@ -204,6 +204,11 @@ body {
   background: #ffffff;
 }
 
+.detail-content {
+  display: grid;
+  gap: 16px;
+}
+
 .detail-header {
   display: grid;
   gap: 2px;
@@ -219,6 +224,84 @@ body {
 .payment-list {
   display: grid;
   gap: 10px;
+}
+
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.metrics-grid div {
+  display: grid;
+  gap: 2px;
+  min-height: 64px;
+  padding: 10px;
+  border: 1px solid #e5eaf1;
+  border-radius: 6px;
+  background: #f9fbfd;
+}
+
+.metrics-grid span {
+  color: #667085;
+  font-size: 0.76rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.metrics-grid strong {
+  font-size: 0.95rem;
+}
+
+.detail-section {
+  display: grid;
+  gap: 8px;
+}
+
+.detail-section h2 {
+  margin: 0;
+  color: #475467;
+  font-size: 0.82rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.item-list {
+  display: grid;
+  gap: 8px;
+  max-height: 360px;
+  overflow: auto;
+}
+
+.line-item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 4px 10px;
+  padding: 10px;
+  border: 1px solid #e5eaf1;
+  border-radius: 6px;
+}
+
+.line-item div {
+  min-width: 0;
+}
+
+.line-item strong,
+.line-item small,
+.line-item span {
+  overflow-wrap: anywhere;
+}
+
+.line-item small,
+.line-item span {
+  color: #667085;
+}
+
+.line-item > strong {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  align-self: center;
+  white-space: nowrap;
 }
 
 .payment-item {
@@ -240,6 +323,11 @@ body {
 .payment-item small,
 .empty-state {
   color: #667085;
+}
+
+.empty-state.compact {
+  min-height: auto;
+  padding: 12px 0;
 }
 
 .login-page {

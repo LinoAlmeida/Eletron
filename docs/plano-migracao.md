@@ -118,6 +118,7 @@ No FastAPI, o "controller" normalmente e chamado de router. Podemos usar `contro
 6. Criar endpoints autenticados de consulta de reservas. [feito]
 7. Criar tela inicial de listagem de reservas. [feito]
 8. Criar tela de login e JWT. [feito]
+9. Criar detalhe de reserva com itens, titulos, caixas e totais de consistencia. [feito]
 
 ## Regras importantes de migracao
 
