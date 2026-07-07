@@ -57,6 +57,30 @@ export interface AdicionarItemResponse {
   valor_liquido: string
 }
 
+export interface FinalizarReservaPayload {
+  reserva_id: number
+  pagamentos: Array<{
+    forma: 'DINHEIRO' | 'PIX' | 'CARTAO' | 'LINK'
+    valor: string
+  }>
+}
+
+export interface FinalizarReservaResponse {
+  reserva_id: number
+  status: string
+  valor_total: string
+  valor_desconto: string
+  valor_liquido: string
+  total_pago: string
+  troco: string
+  titulos: Array<{
+    id: number
+    forma_pagamento_id: number | null
+    valor: string | null
+    status: string | null
+  }>
+}
+
 export async function listarEstoques(): Promise<Estoque[]> {
   const response = await api.get<Estoque[]>('/pdv/estoques')
   return response.data
@@ -78,5 +102,10 @@ export async function buscarProduto(codFil: number, codprod: string): Promise<Pr
 
 export async function adicionarItem(payload: AdicionarItemPayload): Promise<AdicionarItemResponse> {
   const response = await api.post<AdicionarItemResponse>('/pdv/itens', payload)
+  return response.data
+}
+
+export async function finalizarReserva(payload: FinalizarReservaPayload): Promise<FinalizarReservaResponse> {
+  const response = await api.post<FinalizarReservaResponse>('/pdv/finalizar', payload)
   return response.data
 }

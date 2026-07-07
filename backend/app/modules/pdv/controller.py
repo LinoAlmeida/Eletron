@@ -8,6 +8,8 @@ from app.modules.pdv.schemas import (
     EstoqueOut,
     PdvAdicionarItemRequest,
     PdvAdicionarItemResponse,
+    PdvFinalizarRequest,
+    PdvFinalizarResponse,
     ProdutoBuscaOut,
     VendedorOut,
 )
@@ -50,3 +52,12 @@ def adicionar_item(
     usuario: Usuario = Depends(get_current_user),
 ) -> PdvAdicionarItemResponse:
     return PdvService(db).adicionar_item(usuario=usuario, payload=payload)
+
+
+@router.post("/finalizar", response_model=PdvFinalizarResponse)
+def finalizar(
+    payload: PdvFinalizarRequest,
+    db: Session = Depends(get_db),
+    usuario: Usuario = Depends(get_current_user),
+) -> PdvFinalizarResponse:
+    return PdvService(db).finalizar(usuario=usuario, payload=payload)

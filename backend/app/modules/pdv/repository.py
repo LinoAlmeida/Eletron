@@ -4,9 +4,10 @@ from sqlalchemy import func, select, text
 from sqlalchemy.orm import Session
 
 from app.modules.auth.repository import AuthRepository
+from app.modules.financeiro.models import Titulo
 from app.modules.proton.models import VendedorFilial
 from app.modules.reservas.models import Reserva, ReservaItem
-from app.modules.shared.models import Empresa
+from app.modules.shared.models import Empresa, FormaPagamento
 
 
 class PdvRepository:
@@ -69,6 +70,35 @@ class PdvRepository:
     def list_itens_reserva(self, reserva_id: int) -> list[ReservaItem]:
         statement = select(ReservaItem).where(ReservaItem.reserva_id == reserva_id)
         return list(self.db.scalars(statement))
+
+    def next_titulo_id(self) -> int:
+        return int(self.db.scalar(select(func.coalesce(func.max(Titulo.id), 0) + 1)) or 1)
+
+    def add_titulo(self, titulo: Titulo) -> Titulo:
+        self.db.add(titulo)
+        self.db.flush()
+        self.db.refresh(titulo)
+        return titulo
+
+    def get_forma_pagamento_pdv(self, forma: str) -> FormaPagamento | None:
+        forma_upper = forma.upper()
+        tipo_por_forma = {
+            "DINHEIRO": "DN",
+            "PIX": "PX",
+            "CARTAO": "CT",
+            "LINK": "LK",
+        }
+        tipo = tipo_por_forma.get(forma_upper)
+        if tipo is None:
+            return None
+
+        statement = (
+            select(FormaPagamento)
+            .where(FormaPagamento.tipo == tipo)
+            .order_by(FormaPagamento.id)
+            .limit(1)
+        )
+        return self.db.scalar(statement)
 
     def buscar_produto_legacy(self, codprod: str) -> dict | None:
         statement = text(

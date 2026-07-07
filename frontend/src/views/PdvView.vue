@@ -13,7 +13,15 @@ import {
 import { computed, onMounted, ref, watch } from 'vue'
 
 import { getTurnoAtual, type TurnoAtual } from '../services/financeiro'
-import { adicionarItem, buscarProduto, listarEstoques, listarVendedores, type Estoque, type Vendedor } from '../services/pdv'
+import {
+  adicionarItem,
+  buscarProduto,
+  finalizarReserva,
+  listarEstoques,
+  listarVendedores,
+  type Estoque,
+  type Vendedor,
+} from '../services/pdv'
 
 interface PdvItem {
   codigo: number
@@ -41,7 +49,9 @@ const itens = ref<PdvItem[]>([])
 const pagamentos = ref<Pagamento[]>([])
 const reservaId = ref<number | null>(null)
 const loadingProduto = ref(false)
+const loadingFinalizar = ref(false)
 const error = ref<string | null>(null)
+const success = ref<string | null>(null)
 
 const estoqueSelecionado = computed(() => estoques.value.find((item) => item.id === estoqueId.value) ?? null)
 const vendedorSelecionado = computed(() => vendedores.value.find((item) => item.id === vendedorId.value) ?? null)
@@ -106,6 +116,7 @@ async function adicionarProduto() {
 
   loadingProduto.value = true
   error.value = null
+  success.value = null
   try {
     const estoque = estoqueSelecionado.value
     const vendedor = vendedorSelecionado.value
@@ -164,6 +175,7 @@ function cancelar() {
   mezanino.value = false
   reservaId.value = null
   error.value = null
+  success.value = null
 }
 
 function adicionarPagamento(forma: Pagamento['forma']) {
@@ -171,7 +183,7 @@ function adicionarPagamento(forma: Pagamento['forma']) {
   pagamentos.value.push({ forma, valor: Number(valorSugerido.toFixed(2)) })
 }
 
-function finalizar() {
+async function finalizar() {
   const validacao = validarTopo()
   if (validacao) {
     error.value = validacao
@@ -179,6 +191,10 @@ function finalizar() {
   }
   if (itens.value.length === 0) {
     error.value = 'Inclua ao menos um produto.'
+    return
+  }
+  if (!reservaId.value) {
+    error.value = 'Reserva ainda nao foi criada.'
     return
   }
   if (possuiDescontoAltoSemMotivo.value) {
@@ -189,7 +205,28 @@ function finalizar() {
     error.value = 'Confirme o recebimento antes de finalizar.'
     return
   }
-  error.value = 'Finalizacao, titulos e DAV entram na proxima etapa.'
+  loadingFinalizar.value = true
+  error.value = null
+  success.value = null
+  try {
+    const resposta = await finalizarReserva({
+      reserva_id: reservaId.value,
+      pagamentos: pagamentos.value.map((pagamento) => ({
+        forma: pagamento.forma,
+        valor: String(pagamento.valor),
+      })),
+    })
+    success.value = `Reserva #${resposta.reserva_id} finalizada. Titulos: ${resposta.titulos.map((titulo) => `#${titulo.id}`).join(', ')}.`
+    limparItens()
+    pagamentos.value = []
+    mezanino.value = false
+    reservaId.value = null
+  } catch (err) {
+    const detail = (err as { response?: { data?: { detail?: string } } }).response?.data?.detail
+    error.value = detail || 'Nao foi possivel finalizar a reserva.'
+  } finally {
+    loadingFinalizar.value = false
+  }
 }
 
 watch(estoqueId, carregarVendedores)
@@ -263,6 +300,7 @@ onMounted(carregarBase)
     </form>
 
     <div v-if="error" class="alert alert-warning py-2">{{ error }}</div>
+    <div v-if="success" class="alert alert-success py-2">{{ success }}</div>
 
     <div class="pdv-work">
       <div class="table-wrap">
@@ -348,9 +386,9 @@ onMounted(carregarBase)
         </div>
 
         <div class="pdv-actions">
-          <button class="btn btn-primary" type="button" @click="finalizar">
+          <button class="btn btn-primary" type="button" :disabled="loadingFinalizar" @click="finalizar">
             <CreditCard :size="17" />
-            Finalizar
+            {{ loadingFinalizar ? 'Finalizando...' : 'Finalizar' }}
           </button>
           <button class="btn btn-outline-danger" type="button" @click="cancelar">
             <Ban :size="17" />

@@ -70,3 +70,31 @@ class PdvAdicionarItemResponse(BaseModel):
     valor_total: Decimal
     valor_desconto: Decimal
     valor_liquido: Decimal
+
+
+class PdvPagamentoRequest(BaseModel):
+    forma: str
+    valor: Decimal
+
+
+class PdvFinalizarRequest(BaseModel):
+    reserva_id: int
+    pagamentos: list[PdvPagamentoRequest]
+
+
+class PdvTituloOut(BaseModel):
+    id: int
+    forma_pagamento_id: int | None
+    valor: Decimal | None
+    status: str | None
+
+
+class PdvFinalizarResponse(BaseModel):
+    reserva_id: int
+    status: str
+    valor_total: Decimal
+    valor_desconto: Decimal
+    valor_liquido: Decimal
+    total_pago: Decimal
+    troco: Decimal
+    titulos: list[PdvTituloOut]

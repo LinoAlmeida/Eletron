@@ -8,12 +8,16 @@ from sqlalchemy.orm import Session
 
 from app.modules.auth.models import Usuario
 from app.modules.financeiro.service import FinanceiroService
+from app.modules.financeiro.models import Titulo
 from app.modules.pdv.repository import PdvRepository
 from app.modules.pdv.schemas import (
     EstoqueOut,
     PdvAdicionarItemRequest,
     PdvAdicionarItemResponse,
+    PdvFinalizarRequest,
+    PdvFinalizarResponse,
     PdvItemOut,
+    PdvTituloOut,
     ProdutoBuscaOut,
     VendedorOut,
 )
@@ -106,6 +110,93 @@ class PdvService:
             valor_total=reserva.valor_total or Decimal("0"),
             valor_desconto=reserva.valor_desconto or Decimal("0"),
             valor_liquido=reserva.valor_liquido or Decimal("0"),
+        )
+
+    def finalizar(
+        self,
+        *,
+        usuario: Usuario,
+        payload: PdvFinalizarRequest,
+    ) -> PdvFinalizarResponse:
+        turno = FinanceiroService(self.db).turno_atual(usuario=usuario)
+        if turno.requerido and not turno.aberto:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Turno aberto e obrigatorio.")
+        if turno.caixa is None:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Caixa nao encontrado.")
+
+        reserva = self.repository.get_reserva(payload.reserva_id)
+        if reserva is None:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Reserva nao encontrada.")
+
+        itens = self.repository.list_itens_reserva(reserva.id)
+        if not itens:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Inclua ao menos um produto.")
+
+        self._recalcular_totais(reserva)
+        valor_liquido = reserva.valor_liquido or Decimal("0")
+        total_pago = sum((pagamento.valor for pagamento in payload.pagamentos), Decimal("0"))
+        if total_pago < valor_liquido:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Pagamento menor que o valor liquido.")
+
+        agora = datetime.now(ZoneInfo("America/Sao_Paulo"))
+        titulos: list[Titulo] = []
+        next_titulo_id = self.repository.next_titulo_id()
+        for pagamento in payload.pagamentos:
+            if pagamento.valor <= 0:
+                continue
+
+            forma_pagamento = self.repository.get_forma_pagamento_pdv(pagamento.forma)
+            if forma_pagamento is None:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail=f"Forma de pagamento invalida: {pagamento.forma}",
+                )
+
+            titulo = Titulo(
+                id=next_titulo_id,
+                legacy_titulo_id=None,
+                caixa_id=turno.caixa.id,
+                empresa_id=reserva.empresa_id,
+                reserva_id=reserva.id,
+                forma_pagamento_id=forma_pagamento.id,
+                valor=pagamento.valor,
+                status="Finalizado",
+                data=agora.date(),
+                hora=agora.time().replace(microsecond=0),
+            )
+            titulos.append(self.repository.add_titulo(titulo))
+            next_titulo_id += 1
+
+        if not titulos:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Informe ao menos um pagamento.")
+
+        reserva.status = "FINALIZADA"
+        reserva.total_pago = total_pago
+        reserva.troco = total_pago - valor_liquido
+        reserva.forma_pagamento_id = titulos[0].forma_pagamento_id
+
+        self.db.commit()
+        self.db.refresh(reserva)
+        for titulo in titulos:
+            self.db.refresh(titulo)
+
+        return PdvFinalizarResponse(
+            reserva_id=reserva.id,
+            status=reserva.status or "FINALIZADA",
+            valor_total=reserva.valor_total or Decimal("0"),
+            valor_desconto=reserva.valor_desconto or Decimal("0"),
+            valor_liquido=reserva.valor_liquido or Decimal("0"),
+            total_pago=reserva.total_pago or Decimal("0"),
+            troco=reserva.troco or Decimal("0"),
+            titulos=[
+                PdvTituloOut(
+                    id=titulo.id,
+                    forma_pagamento_id=titulo.forma_pagamento_id,
+                    valor=titulo.valor,
+                    status=titulo.status,
+                )
+                for titulo in titulos
+            ],
         )
 
     def _get_or_create_reserva(
