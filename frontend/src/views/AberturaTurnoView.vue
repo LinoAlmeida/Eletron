@@ -24,7 +24,7 @@ async function submit() {
   error.value = null
   try {
     await abrirTurno(valorInicial.value || '0')
-    await router.push('/')
+    await router.push('/pdv')
   } catch {
     error.value = 'Nao foi possivel abrir o turno.'
   } finally {

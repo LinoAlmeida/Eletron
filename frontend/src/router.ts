@@ -4,6 +4,7 @@ import { useAuthStore } from './stores/auth'
 import { getTurnoAtual } from './services/financeiro'
 import AberturaTurnoView from './views/AberturaTurnoView.vue'
 import LoginView from './views/LoginView.vue'
+import PdvView from './views/PdvView.vue'
 import ReservasView from './views/ReservasView.vue'
 
 export const router = createRouter({
@@ -18,6 +19,12 @@ export const router = createRouter({
       path: '/',
       name: 'reservas',
       component: ReservasView,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/pdv',
+      name: 'pdv',
+      component: PdvView,
       meta: { requiresAuth: true },
     },
     {
@@ -44,7 +51,7 @@ router.beforeEach(async (to) => {
         return { name: 'abrir-turno' }
       }
       if ((!turno.requerido || turno.aberto) && to.meta.turnoPage) {
-        return { name: 'reservas' }
+        return { name: 'pdv' }
       }
     } catch {
       auth.logout()
@@ -53,7 +60,7 @@ router.beforeEach(async (to) => {
   }
 
   if (to.name === 'login' && auth.isAuthenticated) {
-    return { name: 'reservas' }
+    return { name: 'pdv' }
   }
 
   return true

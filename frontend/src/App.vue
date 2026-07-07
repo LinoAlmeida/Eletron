@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { BarChart3, Boxes, CalendarClock, LogOut, Menu, ShoppingBag } from 'lucide-vue-next'
+import { BarChart3, Boxes, CalendarClock, LogOut, Menu, ShoppingBag, ShoppingCart } from 'lucide-vue-next'
 import { computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
@@ -27,6 +27,10 @@ async function logout() {
       </div>
 
       <nav class="nav-list">
+        <RouterLink to="/pdv" class="nav-link">
+          <ShoppingCart :size="18" />
+          <span>PDV</span>
+        </RouterLink>
         <RouterLink to="/" class="nav-link">
           <CalendarClock :size="18" />
           <span>Reservas</span>

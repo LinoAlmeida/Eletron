@@ -19,7 +19,7 @@ async function submit() {
   try {
     await auth.login(loginValue.value, senha.value)
     const turno = await getTurnoAtual()
-    await router.push(turno.requerido && !turno.aberto ? '/abrir-turno' : '/')
+    await router.push(turno.requerido && !turno.aberto ? '/abrir-turno' : '/pdv')
   } catch {
     error.value = 'Login ou senha invalidos.'
   } finally {

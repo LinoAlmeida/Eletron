@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from decimal import Decimal
 
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.orm import Session
@@ -62,6 +63,45 @@ class ProtonService:
         ]
         self.upsert_vendedores_filiais(dados)
         return len(dados)
+
+    def buscar_produto(self, *, cod_fil: int, codprod: str) -> dict | None:
+        if not settings.oracle_user or not settings.oracle_password or not settings.oracle_dsn:
+            return None
+
+        import oracledb
+
+        query = """
+            select
+                a.tmer_codigo_pri_pk,
+                a.tmer_nome,
+                a.tmer_referencia,
+                a.tmer_codigo_barras_ukn,
+                b.tmer_preco_venda
+            from TMER_MERCADORIA a, tmer_estoque b
+            where a.tmer_codigo_pri_pk = b.tmer_codigo_pri_fk_pk
+              and b.tmer_unidade_fk_pk = :cod_fil
+              and (a.tmer_codigo_pri_pk = :codprod or a.tmer_codigo_barras_ukn = :codprod)
+        """
+
+        with oracledb.connect(
+            user=settings.oracle_user,
+            password=settings.oracle_password,
+            dsn=settings.oracle_dsn,
+        ) as conn:
+            with conn.cursor() as cursor:
+                cursor.execute(query, cod_fil=cod_fil, codprod=codprod)
+                row = cursor.fetchone()
+
+        if row is None:
+            return None
+
+        return {
+            "codigo": int(row[0]),
+            "nome": row[1],
+            "referencia": row[2],
+            "codigo_barras": row[3],
+            "preco_venda": Decimal(str(row[4] or "0")),
+        }
 
     def upsert_vendedores_filiais(self, dados: list[VendedorFilialDTO]) -> None:
         if not dados:
