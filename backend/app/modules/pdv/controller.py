@@ -4,7 +4,13 @@ from sqlalchemy.orm import Session
 from app.core.database import get_db
 from app.modules.auth.models import Usuario
 from app.modules.auth.service import get_current_user
-from app.modules.pdv.schemas import EstoqueOut, ProdutoBuscaOut, VendedorOut
+from app.modules.pdv.schemas import (
+    EstoqueOut,
+    PdvAdicionarItemRequest,
+    PdvAdicionarItemResponse,
+    ProdutoBuscaOut,
+    VendedorOut,
+)
 from app.modules.pdv.service import PdvService
 
 router = APIRouter()
@@ -35,3 +41,12 @@ def buscar_produto(
     usuario: Usuario = Depends(get_current_user),
 ) -> ProdutoBuscaOut:
     return PdvService(db).buscar_produto(cod_fil=cod_fil, codprod=codprod)
+
+
+@router.post("/itens", response_model=PdvAdicionarItemResponse)
+def adicionar_item(
+    payload: PdvAdicionarItemRequest,
+    db: Session = Depends(get_db),
+    usuario: Usuario = Depends(get_current_user),
+) -> PdvAdicionarItemResponse:
+    return PdvService(db).adicionar_item(usuario=usuario, payload=payload)

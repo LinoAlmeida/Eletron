@@ -13,7 +13,7 @@ import {
 import { computed, onMounted, ref, watch } from 'vue'
 
 import { getTurnoAtual, type TurnoAtual } from '../services/financeiro'
-import { buscarProduto, listarEstoques, listarVendedores, type Estoque, type Vendedor } from '../services/pdv'
+import { adicionarItem, buscarProduto, listarEstoques, listarVendedores, type Estoque, type Vendedor } from '../services/pdv'
 
 interface PdvItem {
   codigo: number
@@ -39,7 +39,7 @@ const mezanino = ref(false)
 const busca = ref('')
 const itens = ref<PdvItem[]>([])
 const pagamentos = ref<Pagamento[]>([])
-const reservaCriada = ref(false)
+const reservaId = ref<number | null>(null)
 const loadingProduto = ref(false)
 const error = ref<string | null>(null)
 
@@ -107,10 +107,29 @@ async function adicionarProduto() {
   loadingProduto.value = true
   error.value = null
   try {
-    const produto = await buscarProduto(estoqueSelecionado.value.proton_id, busca.value.trim())
+    const estoque = estoqueSelecionado.value
+    const vendedor = vendedorSelecionado.value
+    if (!estoque?.proton_id || !vendedor) return
+
+    const produto = await buscarProduto(estoque.proton_id, busca.value.trim())
     const existente = itens.value.find((item) => item.codigo === produto.codigo)
+    const quantidade = existente ? existente.quantidade + 1 : 1
+    const salvarItem = await adicionarItem({
+      reserva_id: reservaId.value,
+      estoque_id: estoque.id,
+      vendedor_filial_id: vendedor.id,
+      produto_codigo: produto.codigo,
+      produto_nome: produto.nome,
+      valor_unitario: String(normalizarNumero(produto.preco_venda)),
+      quantidade: '1',
+      percentual_desconto: String(existente?.descontoPercentual ?? 0),
+      referencia: produto.referencia,
+      mezanino: mezanino.value,
+      motivo_desconto: existente?.motivoDesconto || null,
+    })
+    reservaId.value = salvarItem.reserva_id
     if (existente) {
-      existente.quantidade += 1
+      existente.quantidade = quantidade
     } else {
       itens.value.push({
         codigo: produto.codigo,
@@ -122,7 +141,6 @@ async function adicionarProduto() {
         motivoDesconto: '',
       })
     }
-    reservaCriada.value = true
     busca.value = ''
   } catch (err) {
     const detail = (err as { response?: { data?: { detail?: string } } }).response?.data?.detail
@@ -134,18 +152,17 @@ async function adicionarProduto() {
 
 function removerItem(codigo: number) {
   itens.value = itens.value.filter((item) => item.codigo !== codigo)
-  if (itens.value.length === 0) reservaCriada.value = false
 }
 
 function limparItens() {
   itens.value = []
-  reservaCriada.value = false
 }
 
 function cancelar() {
   limparItens()
   pagamentos.value = []
   mezanino.value = false
+  reservaId.value = null
   error.value = null
 }
 
@@ -208,7 +225,7 @@ onMounted(carregarBase)
 
       <div class="pdv-indicator">
         <span>Reserva</span>
-        <strong>{{ reservaCriada ? 'Automatica' : 'Aguardando item' }}</strong>
+        <strong>{{ reservaId ? `#${reservaId}` : 'Aguardando item' }}</strong>
       </div>
 
       <div class="pdv-indicator">

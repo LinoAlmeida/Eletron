@@ -1,11 +1,24 @@
+from datetime import datetime
+from decimal import Decimal
+from zoneinfo import ZoneInfo
+
 from fastapi import HTTPException, status
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
 from app.modules.auth.models import Usuario
+from app.modules.financeiro.service import FinanceiroService
 from app.modules.pdv.repository import PdvRepository
-from app.modules.pdv.schemas import EstoqueOut, ProdutoBuscaOut, VendedorOut
+from app.modules.pdv.schemas import (
+    EstoqueOut,
+    PdvAdicionarItemRequest,
+    PdvAdicionarItemResponse,
+    PdvItemOut,
+    ProdutoBuscaOut,
+    VendedorOut,
+)
 from app.modules.proton.service import ProtonService
+from app.modules.reservas.models import Reserva, ReservaItem
 
 
 class PdvService:
@@ -52,3 +65,130 @@ class PdvService:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Produto nao encontrado.")
 
         return ProdutoBuscaOut(**produto)
+
+    def adicionar_item(
+        self,
+        *,
+        usuario: Usuario,
+        payload: PdvAdicionarItemRequest,
+    ) -> PdvAdicionarItemResponse:
+        turno = FinanceiroService(self.db).turno_atual(usuario=usuario)
+        if turno.requerido and not turno.aberto:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Turno aberto e obrigatorio.")
+
+        estoque = self.repository.get_estoque_usuario(
+            usuario_id=usuario.id,
+            estoque_id=payload.estoque_id,
+        )
+        if estoque is None:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Estoque invalido.")
+
+        vendedor = self.repository.get_vendedor_filial(payload.vendedor_filial_id)
+        if vendedor is None or vendedor.filial_proton_id != estoque.proton_id:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Vendedor invalido para o estoque.")
+
+        if payload.percentual_desconto > Decimal("5") and not (payload.motivo_desconto or "").strip():
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Informe o motivo para descontos acima de 5%.",
+            )
+
+        reserva = self._get_or_create_reserva(usuario=usuario, payload=payload, vendedor_nome=vendedor.nome)
+        item = self._upsert_item(reserva=reserva, payload=payload)
+        self._recalcular_totais(reserva)
+        self.db.commit()
+        self.db.refresh(reserva)
+        self.db.refresh(item)
+
+        return PdvAdicionarItemResponse(
+            reserva_id=reserva.id,
+            item=PdvItemOut.model_validate(item),
+            valor_total=reserva.valor_total or Decimal("0"),
+            valor_desconto=reserva.valor_desconto or Decimal("0"),
+            valor_liquido=reserva.valor_liquido or Decimal("0"),
+        )
+
+    def _get_or_create_reserva(
+        self,
+        *,
+        usuario: Usuario,
+        payload: PdvAdicionarItemRequest,
+        vendedor_nome: str | None,
+    ) -> Reserva:
+        if payload.reserva_id is not None:
+            reserva = self.repository.get_reserva(payload.reserva_id)
+            if reserva is None:
+                raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Reserva nao encontrada.")
+            return reserva
+
+        agora = datetime.now(ZoneInfo("America/Sao_Paulo"))
+        observacoes = []
+        if payload.mezanino:
+            observacoes.append("Mezanino: S")
+
+        reserva = Reserva(
+            id=self.repository.next_reserva_id(),
+            legacy_reserva_id=None,
+            empresa_id=payload.estoque_id,
+            data=agora.date(),
+            hora=agora.time().replace(microsecond=0),
+            vendedor_id=payload.vendedor_filial_id,
+            vendedor_nome=vendedor_nome,
+            status="ABERTA",
+            forma_pagamento_id=None,
+            valor_total=Decimal("0"),
+            valor_desconto=Decimal("0"),
+            valor_liquido=Decimal("0"),
+            total_pago=Decimal("0"),
+            troco=Decimal("0"),
+            observacao="; ".join(observacoes) or None,
+        )
+        return self.repository.add_reserva(reserva)
+
+    def _upsert_item(self, *, reserva: Reserva, payload: PdvAdicionarItemRequest) -> ReservaItem:
+        produto_codigo = str(payload.produto_codigo)
+        quantidade = payload.quantidade or Decimal("1")
+        valor_unitario = payload.valor_unitario
+        percentual_desconto = payload.percentual_desconto or Decimal("0")
+
+        item = self.repository.get_item_by_produto(
+            reserva_id=reserva.id,
+            produto_codigo=produto_codigo,
+        )
+        if item is None:
+            item = ReservaItem(
+                id=self.repository.next_reserva_item_id(),
+                legacy_item_id=None,
+                reserva_id=reserva.id,
+                produto_codigo=produto_codigo,
+                produto_nome=payload.produto_nome,
+                valor_unitario=valor_unitario,
+                quantidade=quantidade,
+                percentual_desconto=percentual_desconto,
+                grupo_codigo=None,
+                grupo_descricao=None,
+                tamanho=payload.referencia,
+            )
+            self._atualizar_totais_item(item)
+            return self.repository.add_item(item)
+
+        item.quantidade = (item.quantidade or Decimal("0")) + quantidade
+        item.valor_unitario = valor_unitario
+        item.percentual_desconto = percentual_desconto
+        self._atualizar_totais_item(item)
+        self.db.flush()
+        self.db.refresh(item)
+        return item
+
+    def _atualizar_totais_item(self, item: ReservaItem) -> None:
+        valor_total = (item.valor_unitario or Decimal("0")) * (item.quantidade or Decimal("0"))
+        valor_desconto = valor_total * ((item.percentual_desconto or Decimal("0")) / Decimal("100"))
+        item.valor_total = valor_total
+        item.valor_desconto = valor_desconto
+        item.valor_final = valor_total - valor_desconto
+
+    def _recalcular_totais(self, reserva: Reserva) -> None:
+        itens = self.repository.list_itens_reserva(reserva.id)
+        reserva.valor_total = sum((item.valor_total or Decimal("0") for item in itens), Decimal("0"))
+        reserva.valor_desconto = sum((item.valor_desconto or Decimal("0") for item in itens), Decimal("0"))
+        reserva.valor_liquido = sum((item.valor_final or Decimal("0") for item in itens), Decimal("0"))

@@ -34,3 +34,39 @@ class ProdutoBuscaOut(BaseModel):
 
 class PdvBootstrapResponse(BaseModel):
     estoques: list[EstoqueOut]
+
+
+class PdvAdicionarItemRequest(BaseModel):
+    reserva_id: int | None = None
+    estoque_id: int
+    vendedor_filial_id: int
+    produto_codigo: int
+    produto_nome: str
+    valor_unitario: Decimal
+    quantidade: Decimal = Decimal("1")
+    percentual_desconto: Decimal = Decimal("0")
+    referencia: str | None = None
+    mezanino: bool = False
+    motivo_desconto: str | None = None
+
+
+class PdvItemOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    produto_codigo: str | None
+    produto_nome: str | None
+    valor_unitario: Decimal | None
+    quantidade: Decimal | None
+    valor_total: Decimal | None
+    percentual_desconto: Decimal | None
+    valor_desconto: Decimal | None
+    valor_final: Decimal | None
+
+
+class PdvAdicionarItemResponse(BaseModel):
+    reserva_id: int
+    item: PdvItemOut
+    valor_total: Decimal
+    valor_desconto: Decimal
+    valor_liquido: Decimal
