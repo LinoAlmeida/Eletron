@@ -27,9 +27,11 @@ class PdvService:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Informe o codigo do produto.")
 
         produto = None
+        oracle_error: Exception | None = None
         try:
             produto = ProtonService(self.db).buscar_produto(cod_fil=cod_fil, codprod=codigo)
-        except Exception:
+        except Exception as exc:
+            oracle_error = exc
             produto = None
 
         if produto is None:
@@ -39,6 +41,14 @@ class PdvService:
                 produto = None
 
         if produto is None:
+            if oracle_error is not None:
+                raise HTTPException(
+                    status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+                    detail=(
+                        "Nao foi possivel consultar o Proton/Oracle. "
+                        f"{oracle_error.__class__.__name__}: {oracle_error}"
+                    ),
+                )
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Produto nao encontrado.")
 
         return ProdutoBuscaOut(**produto)

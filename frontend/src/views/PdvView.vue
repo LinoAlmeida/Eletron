@@ -124,8 +124,9 @@ async function adicionarProduto() {
     }
     reservaCriada.value = true
     busca.value = ''
-  } catch {
-    error.value = 'Produto nao encontrado para o estoque selecionado.'
+  } catch (err) {
+    const detail = (err as { response?: { data?: { detail?: string } } }).response?.data?.detail
+    error.value = detail || 'Produto nao encontrado para o estoque selecionado.'
   } finally {
     loadingProduto.value = false
   }
