@@ -36,6 +36,7 @@ interface PdvItem {
 interface Pagamento {
   forma: 'DINHEIRO' | 'PIX' | 'CARTAO' | 'LINK'
   valor: number
+  parcelas: number | null
 }
 
 const estoques = ref<Estoque[]>([])
@@ -180,7 +181,11 @@ function cancelar() {
 
 function adicionarPagamento(forma: Pagamento['forma']) {
   const valorSugerido = faltaPagar.value || totalLiquido.value
-  pagamentos.value.push({ forma, valor: Number(valorSugerido.toFixed(2)) })
+  pagamentos.value.push({
+    forma,
+    valor: Number(valorSugerido.toFixed(2)),
+    parcelas: forma === 'CARTAO' ? 1 : null,
+  })
 }
 
 async function finalizar() {
@@ -214,6 +219,7 @@ async function finalizar() {
       pagamentos: pagamentos.value.map((pagamento) => ({
         forma: pagamento.forma,
         valor: String(pagamento.valor),
+        parcelas: pagamento.forma === 'CARTAO' ? pagamento.parcelas || 1 : null,
       })),
     })
     success.value = `Reserva #${resposta.reserva_id} finalizada. Titulos: ${resposta.titulos.map((titulo) => `#${titulo.id}`).join(', ')}.`
@@ -381,6 +387,14 @@ onMounted(carregarBase)
           <div v-for="(pagamento, index) in pagamentos" :key="index" class="payment-row">
             <span>{{ pagamento.forma }}</span>
             <input v-model.number="pagamento.valor" class="form-control form-control-sm" type="number" step="0.01" />
+            <select
+              v-if="pagamento.forma === 'CARTAO'"
+              v-model.number="pagamento.parcelas"
+              class="form-select form-select-sm"
+              aria-label="Parcelas do cartao"
+            >
+              <option v-for="parcela in 6" :key="parcela" :value="parcela">{{ parcela }}x</option>
+            </select>
           </div>
           <small v-if="faltaPagar > 0">Falta receber {{ money(faltaPagar) }}</small>
         </div>

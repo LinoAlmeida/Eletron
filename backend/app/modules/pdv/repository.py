@@ -80,7 +80,7 @@ class PdvRepository:
         self.db.refresh(titulo)
         return titulo
 
-    def get_forma_pagamento_pdv(self, forma: str) -> FormaPagamento | None:
+    def get_forma_pagamento_pdv(self, forma: str, parcelas: int | None = None) -> FormaPagamento | None:
         forma_upper = forma.upper()
         tipo_por_forma = {
             "DINHEIRO": "DN",
@@ -91,6 +91,17 @@ class PdvRepository:
         tipo = tipo_por_forma.get(forma_upper)
         if tipo is None:
             return None
+
+        if forma_upper == "CARTAO":
+            parcelas_cartao = parcelas or 1
+            parcela_label = f"{parcelas_cartao:02d} X"
+            statement = (
+                select(FormaPagamento)
+                .where(FormaPagamento.tipo == tipo, FormaPagamento.nome.ilike(f"%{parcela_label}%"))
+                .order_by(FormaPagamento.id)
+                .limit(1)
+            )
+            return self.db.scalar(statement)
 
         statement = (
             select(FormaPagamento)

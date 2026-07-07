@@ -145,7 +145,18 @@ class PdvService:
             if pagamento.valor <= 0:
                 continue
 
-            forma_pagamento = self.repository.get_forma_pagamento_pdv(pagamento.forma)
+            if pagamento.forma.upper() == "CARTAO" and (
+                pagamento.parcelas is None or pagamento.parcelas < 1
+            ):
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="Informe a quantidade de parcelas do cartao.",
+                )
+
+            forma_pagamento = self.repository.get_forma_pagamento_pdv(
+                pagamento.forma,
+                parcelas=pagamento.parcelas,
+            )
             if forma_pagamento is None:
                 raise HTTPException(
                     status_code=status.HTTP_400_BAD_REQUEST,

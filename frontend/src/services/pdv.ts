@@ -62,6 +62,7 @@ export interface FinalizarReservaPayload {
   pagamentos: Array<{
     forma: 'DINHEIRO' | 'PIX' | 'CARTAO' | 'LINK'
     valor: string
+    parcelas?: number | null
   }>
 }
 

@@ -491,7 +491,7 @@ body {
 
 .payment-row {
   display: grid;
-  grid-template-columns: 82px minmax(0, 1fr);
+  grid-template-columns: 82px minmax(0, 1fr) 72px;
   gap: 8px;
   align-items: center;
 }

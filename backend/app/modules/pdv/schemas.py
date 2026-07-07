@@ -75,6 +75,7 @@ class PdvAdicionarItemResponse(BaseModel):
 class PdvPagamentoRequest(BaseModel):
     forma: str
     valor: Decimal
+    parcelas: int | None = None
 
 
 class PdvFinalizarRequest(BaseModel):
