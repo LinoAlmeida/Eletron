@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 import os
+import re
 from datetime import date, time
 from decimal import Decimal, InvalidOperation
 
@@ -37,6 +38,11 @@ def to_time(value: str | None) -> time | None:
     if len(raw) != 6:
         return None
     return time(int(raw[0:2]), int(raw[2:4]), int(raw[4:6]))
+
+
+def normalize_username(nome: str, usuario_id: int) -> str:
+    base = re.sub(r"[^a-z0-9]+", ".", nome.strip().lower()).strip(".")
+    return base or f"usuario.{usuario_id}"
 
 
 def transform_empresas(conn: psycopg.Connection) -> None:
@@ -216,13 +222,169 @@ def transform_reserva_itens(conn: psycopg.Connection) -> None:
         )
 
 
+def transform_auth(conn: psycopg.Connection) -> None:
+    from app.core.security import get_password_hash
+
+    with conn.cursor() as cur:
+        cur.execute("TRUNCATE usuarios_empresas RESTART IDENTITY")
+        cur.execute("TRUNCATE usuarios RESTART IDENTITY CASCADE")
+        cur.execute("TRUNCATE perfis RESTART IDENTITY CASCADE")
+
+        cur.execute('SELECT id FROM empresas')
+        empresa_ids = {row[0] for row in cur.fetchall()}
+
+        cur.execute(
+            """
+            SELECT DISTINCT "T005_Tipo"
+            FROM legacy.t005_usuarios
+            WHERE COALESCE("T005_Tipo", '') <> ''
+            ORDER BY "T005_Tipo"
+            """
+        )
+        tipo_rows = cur.fetchall()
+        perfis = [
+            (to_int(row[0]), to_int(row[0]), f"Nivel {to_int(row[0])}")
+            for row in tipo_rows
+            if to_int(row[0]) is not None
+        ]
+        if not perfis:
+            perfis = [(1, 1, "Usuario")]
+
+        cur.executemany(
+            """
+            INSERT INTO perfis (id, legacy_nivel_id, nome)
+            VALUES (%s, %s, %s)
+            ON CONFLICT (id) DO NOTHING
+            """,
+            perfis,
+        )
+
+        perfil_ids = {perfil[0] for perfil in perfis}
+
+        cur.execute(
+            """
+            SELECT
+                "T005_Usuarios_ID",
+                "T005_Nome",
+                "T005_email",
+                "T005_Cpf",
+                "T005_Senha",
+                "T005_CodPronton",
+                "T005_Tipo",
+                "T005_Filial",
+                "T000_Empresa_ID"
+            FROM legacy.t005_usuarios
+            """
+        )
+        rows = cur.fetchall()
+        usuarios = []
+        usernames = set()
+        for row in rows:
+            usuario_id = to_int(row[0])
+            if usuario_id is None:
+                continue
+
+            nome = (row[1] or f"Usuario {usuario_id}").strip()
+            username = normalize_username(nome, usuario_id)
+            if username in usernames:
+                username = f"{username}.{usuario_id}"
+            usernames.add(username)
+            email = (row[2] or "").strip().lower() or None
+            cpf = (row[3] or "").strip() or None
+            legacy_senha = (row[4] or "").strip() or "alterar"
+            perfil_id = to_int(row[6])
+            empresa_padrao_id = to_int(row[8])
+            if perfil_id not in perfil_ids:
+                perfil_id = None
+            if empresa_padrao_id not in empresa_ids:
+                empresa_padrao_id = None
+
+            usuarios.append(
+                (
+                    usuario_id,
+                    usuario_id,
+                    nome,
+                    username,
+                    email,
+                    cpf,
+                    get_password_hash(legacy_senha),
+                    to_int(row[5]),
+                    perfil_id,
+                    to_int(row[7]),
+                    empresa_padrao_id,
+                    True,
+                    True,
+                )
+            )
+
+        cur.executemany(
+            """
+            INSERT INTO usuarios (
+                id, legacy_usuario_id, nome, username, email, cpf, senha_hash, cod_proton,
+                perfil_id, filial, empresa_padrao_id, ativo, senha_deve_alterar
+            )
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            """,
+            usuarios,
+        )
+
+        usuario_ids = {usuario[0] for usuario in usuarios}
+
+        cur.execute(
+            """
+            SELECT
+                "T009_UsuarioXEmpresaID",
+                "T000_Empresa_ID",
+                "T005_Usuarios_ID"
+            FROM legacy.t009_usuariosxempresas
+            """
+        )
+        rows = cur.fetchall()
+        vinculos = []
+        seen = set()
+        next_vinculo_id = 1
+        for row in rows:
+            vinculo_id = to_int(row[0])
+            empresa_id = to_int(row[1])
+            usuario_id = to_int(row[2])
+            key = (usuario_id, empresa_id)
+            if (
+                vinculo_id is None
+                or usuario_id not in usuario_ids
+                or empresa_id not in empresa_ids
+                or key in seen
+            ):
+                continue
+            seen.add(key)
+            next_vinculo_id = max(next_vinculo_id, vinculo_id + 1)
+            vinculos.append((vinculo_id, vinculo_id, usuario_id, empresa_id))
+
+        for usuario in usuarios:
+            usuario_id = usuario[0]
+            empresa_id = usuario[10]
+            key = (usuario_id, empresa_id)
+            if empresa_id in empresa_ids and key not in seen:
+                seen.add(key)
+                vinculos.append((next_vinculo_id, None, usuario_id, empresa_id))
+                next_vinculo_id += 1
+
+        cur.executemany(
+            """
+            INSERT INTO usuarios_empresas
+                (id, legacy_usuario_empresa_id, usuario_id, empresa_id)
+            VALUES (%s, %s, %s, %s)
+            """,
+            vinculos,
+        )
+
+
 def main() -> None:
     import psycopg
 
     parser = argparse.ArgumentParser(description="Transforma tabelas legacy para o modelo inicial.")
     parser.add_argument(
         "--database-url",
-        default=os.getenv("LEGACY_DATABASE_URL", "postgresql://eletron:eletron_dev@127.0.0.1:5432/eletron"),
+        default=os.getenv("LEGACY_DATABASE_URL", "postgresql://eletron:eletron_dev@127.0.0.1:5433/eletron"),
     )
     args = parser.parse_args()
 
@@ -235,6 +397,8 @@ def main() -> None:
         print("reservas transformadas")
         transform_reserva_itens(conn)
         print("reserva_itens transformados")
+        transform_auth(conn)
+        print("usuarios, perfis e vinculos transformados")
 
     print("Transformacao inicial concluida.")
 

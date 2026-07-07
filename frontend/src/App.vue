@@ -1,9 +1,25 @@
 <script setup lang="ts">
 import { BarChart3, Boxes, CalendarClock, LogOut, Menu, ShoppingBag } from 'lucide-vue-next'
+import { computed } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+
+import { useAuthStore } from './stores/auth'
+
+const route = useRoute()
+const router = useRouter()
+const auth = useAuthStore()
+const usesShell = computed(() => route.meta.requiresAuth)
+
+async function logout() {
+  auth.logout()
+  await router.push('/login')
+}
 </script>
 
 <template>
-  <div class="app-shell">
+  <RouterView v-if="!usesShell" />
+
+  <div v-else class="app-shell">
     <aside class="sidebar">
       <div class="brand">
         <ShoppingBag :size="24" />
@@ -33,9 +49,9 @@ import { BarChart3, Boxes, CalendarClock, LogOut, Menu, ShoppingBag } from 'luci
         </button>
         <div class="topbar-title">
           <strong>Reservas</strong>
-          <span>PDV, pedidos e historico migrado</span>
+          <span>{{ auth.usuario?.nome || 'PDV, pedidos e historico migrado' }}</span>
         </div>
-        <button class="btn btn-outline-secondary icon-btn" type="button" aria-label="Sair">
+        <button class="btn btn-outline-secondary icon-btn" type="button" aria-label="Sair" @click="logout">
           <LogOut :size="18" />
         </button>
       </header>

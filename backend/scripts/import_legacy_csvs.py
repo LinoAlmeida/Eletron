@@ -65,7 +65,7 @@ def main() -> None:
     parser.add_argument("--input", default="../ExportHFSQL", help="Diretorio com CSVs exportados.")
     parser.add_argument(
         "--database-url",
-        default=os.getenv("LEGACY_DATABASE_URL", "postgresql://eletron:eletron_dev@127.0.0.1:5432/eletron"),
+        default=os.getenv("LEGACY_DATABASE_URL", "postgresql://eletron:eletron_dev@127.0.0.1:5433/eletron"),
         help="URL psycopg do PostgreSQL.",
     )
     parser.add_argument("--only", nargs="*", help="Lista opcional de arquivos/stems para importar.")

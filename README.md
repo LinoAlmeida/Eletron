@@ -41,6 +41,8 @@ Subir PostgreSQL:
 docker compose up -d postgres
 ```
 
+O PostgreSQL do Docker publica a porta local `5433` para evitar conflito com instalacoes locais na porta `5432`.
+
 Copiar variaveis de ambiente:
 
 ```powershell
@@ -84,7 +86,16 @@ Rodar API:
 Endpoints iniciais:
 
 - `GET http://127.0.0.1:8000/api/v1/health`
+- `POST http://127.0.0.1:8000/api/v1/auth/login`
+- `GET http://127.0.0.1:8000/api/v1/auth/me`
 - `GET http://127.0.0.1:8000/api/v1/reservas`
+
+Usuario legado para teste apos importar/transformar os CSVs:
+
+```text
+Login: Master User
+Senha: 11463402000149
+```
 
 ## Frontend
 
