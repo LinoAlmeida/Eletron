@@ -12,6 +12,27 @@ docs/             Inventario e plano de migracao
 scripts/          Ferramentas auxiliares do workspace
 ```
 
+## Subir tudo com script
+
+No Git Bash ou WSL:
+
+```bash
+./scripts/dev-up.sh
+```
+
+Opcoes uteis:
+
+```bash
+./scripts/dev-up.sh --skip-import
+./scripts/dev-up.sh --no-install --skip-import
+./scripts/dev-up.sh --backend-only
+./scripts/dev-up.sh --frontend-only
+```
+
+O script sobe PostgreSQL, aplica migrations, importa/transforma os CSVs quando existirem, instala dependencias e inicia backend e frontend.
+
+No PowerShell, caso `npm install` seja bloqueado por policy, use `npm.cmd install` ou rode o script pelo Git Bash.
+
 ## Banco local
 
 Subir PostgreSQL:
