@@ -53,3 +53,17 @@ class TituloListResponse(BaseModel):
 class CaixaListResponse(BaseModel):
     total: int
     items: list[CaixaOut]
+
+
+class TurnoAtualResponse(BaseModel):
+    requerido: bool
+    aberto: bool
+    caixa: CaixaOut | None = None
+
+
+class AbrirTurnoRequest(BaseModel):
+    valor_inicial: Decimal = Decimal("0")
+
+
+class AbrirTurnoResponse(BaseModel):
+    caixa: CaixaOut

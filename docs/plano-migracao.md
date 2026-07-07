@@ -119,6 +119,7 @@ No FastAPI, o "controller" normalmente e chamado de router. Podemos usar `contro
 7. Criar tela inicial de listagem de reservas. [feito]
 8. Criar tela de login e JWT. [feito]
 9. Criar detalhe de reserva com itens, titulos, caixas e totais de consistencia. [feito]
+10. Ajustar login por codigo Proton, criar fluxo de turno aberto e preparar sincronizacao Proton. [feito]
 
 ## Regras importantes de migracao
 

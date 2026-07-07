@@ -4,6 +4,7 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 
 import { useAuthStore } from '../stores/auth'
+import { getTurnoAtual } from '../services/financeiro'
 
 const router = useRouter()
 const auth = useAuthStore()
@@ -17,7 +18,8 @@ async function submit() {
   error.value = null
   try {
     await auth.login(loginValue.value, senha.value)
-    await router.push('/')
+    const turno = await getTurnoAtual()
+    await router.push(turno.requerido && !turno.aberto ? '/abrir-turno' : '/')
   } catch {
     error.value = 'Login ou senha invalidos.'
   } finally {
@@ -39,11 +41,12 @@ async function submit() {
 
       <form class="login-form" @submit.prevent="submit">
         <div>
-          <label class="form-label" for="login">Usuario</label>
+          <label class="form-label" for="login">Codigo Proton</label>
           <input
             id="login"
             v-model="loginValue"
             class="form-control"
+            inputmode="numeric"
             autocomplete="username"
             required
             autofocus

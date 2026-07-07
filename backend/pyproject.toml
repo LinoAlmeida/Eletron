@@ -9,6 +9,7 @@ dependencies = [
   "passlib>=1.7.4",
   "psycopg[binary]>=3.2.1",
   "pydantic-settings>=2.4.0",
+  "oracledb>=2.5.1",
   "python-jose[cryptography]>=3.3.0",
   "python-multipart>=0.0.9",
   "sqlalchemy>=2.0.32",

@@ -92,12 +92,14 @@ Endpoints iniciais:
 - `GET http://127.0.0.1:8000/api/v1/reservas/{reserva_id}`
 - `GET http://127.0.0.1:8000/api/v1/financeiro/caixas`
 - `GET http://127.0.0.1:8000/api/v1/financeiro/reservas/{reserva_id}/titulos`
+- `GET http://127.0.0.1:8000/api/v1/financeiro/turno-atual`
+- `POST http://127.0.0.1:8000/api/v1/financeiro/turnos/abrir`
 
-Usuario legado para teste apos importar/transformar os CSVs:
+Usuario legado para teste apos importar/transformar os CSVs. O login segue a regra atual do sistema: codigo Proton + senha.
 
 ```text
-Login: Master User
-Senha: 11463402000149
+Login: 11463
+Senha: 123456
 ```
 
 Para redefinir uma senha local:
@@ -105,6 +107,14 @@ Para redefinir uma senha local:
 ```powershell
 cd backend
 .\.venv\Scripts\python.exe .\scripts\set_user_password.py lino.almeida 123456
+```
+
+Variaveis opcionais para sincronizacao Oracle/Proton:
+
+```text
+ORACLE_USER=
+ORACLE_PASSWORD=
+ORACLE_DSN=
 ```
 
 ## Frontend

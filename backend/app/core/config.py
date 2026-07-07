@@ -13,6 +13,9 @@ class Settings(BaseSettings):
     database_url: str = "postgresql+psycopg://eletron:eletron_dev@127.0.0.1:5433/eletron"
     legacy_database_url: str = "postgresql://eletron:eletron_dev@127.0.0.1:5433/eletron"
     backend_cors_origins: str = "http://localhost:5173,http://127.0.0.1:5173"
+    oracle_user: str | None = None
+    oracle_password: str | None = None
+    oracle_dsn: str | None = None
 
     @property
     def cors_origins(self) -> list[str]:

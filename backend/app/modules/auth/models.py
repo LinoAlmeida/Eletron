@@ -32,6 +32,22 @@ class Usuario(Base):
     perfil: Mapped[Perfil | None] = relationship()
     empresas: Mapped[list["UsuarioEmpresa"]] = relationship(back_populates="usuario")
 
+    @property
+    def glo_id_user(self) -> int:
+        return self.id
+
+    @property
+    def glo_tp_user(self) -> int | None:
+        return self.perfil_id
+
+    @property
+    def glo_empresa(self) -> int | None:
+        return self.empresa_padrao_id
+
+    @property
+    def glo_id_proton(self) -> int | None:
+        return self.cod_proton
+
 
 class UsuarioEmpresa(Base):
     __tablename__ = "usuarios_empresas"

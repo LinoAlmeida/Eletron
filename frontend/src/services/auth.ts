@@ -15,6 +15,10 @@ export interface Usuario {
   perfil: Perfil | null
   empresa_padrao_id: number | null
   senha_deve_alterar: boolean
+  glo_id_user: number
+  glo_tp_user: number | null
+  glo_empresa: number | null
+  glo_id_proton: number | null
 }
 
 export interface EmpresaAuth {
@@ -27,6 +31,7 @@ export interface LoginResponse {
   access_token: string
   token_type: string
   usuario: Usuario
+  vendedores_filiais_sincronizados: number
 }
 
 export async function login(loginValue: string, senha: string): Promise<LoginResponse> {

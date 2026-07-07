@@ -1,3 +1,5 @@
+from datetime import date
+
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
@@ -31,3 +33,32 @@ class FinanceiroRepository:
         if empresa_id is not None:
             statement = statement.where(Caixa.empresa_id == empresa_id)
         return int(self.db.scalar(statement) or 0)
+
+    def get_turno_aberto(
+        self,
+        *,
+        empresa_id: int,
+        usuario_id: int,
+        data_abertura: date,
+    ) -> Caixa | None:
+        statement = (
+            select(Caixa)
+            .where(
+                Caixa.empresa_id == empresa_id,
+                Caixa.usuario_id == usuario_id,
+                Caixa.data_abertura == data_abertura,
+                Caixa.status == "1",
+            )
+            .order_by(Caixa.id.desc())
+            .limit(1)
+        )
+        return self.db.scalar(statement)
+
+    def next_caixa_id(self) -> int:
+        return int(self.db.scalar(select(func.coalesce(func.max(Caixa.id), 0) + 1)) or 1)
+
+    def add_caixa(self, caixa: Caixa) -> Caixa:
+        self.db.add(caixa)
+        self.db.flush()
+        self.db.refresh(caixa)
+        return caixa

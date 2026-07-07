@@ -394,6 +394,59 @@ def transform_titulos(conn: psycopg.Connection) -> None:
         )
 
 
+def transform_vendedores_filiais(conn: psycopg.Connection) -> None:
+    with conn.cursor() as cur:
+        cur.execute("TRUNCATE vendedores_filiais RESTART IDENTITY")
+        cur.execute(
+            """
+            SELECT
+                "T048_VendedoresXFilial_ID",
+                "t048_Pk_Proton",
+                "t048_nome",
+                "t048_nomAbrev",
+                "t048_CpfVend",
+                "t048_lnkFilial",
+                "t048_Ativo"
+            FROM legacy.t048_vendedoresxfilial
+            """
+        )
+        rows = cur.fetchall()
+        vendedores = []
+        seen = set()
+        for row in rows:
+            vendedor_id = to_int(row[1])
+            filial_id = to_int(row[5])
+            if vendedor_id is None or filial_id is None:
+                continue
+            key = (vendedor_id, filial_id)
+            if key in seen:
+                continue
+            seen.add(key)
+            vendedores.append(
+                (
+                    to_int(row[0]),
+                    to_int(row[0]),
+                    vendedor_id,
+                    row[2] or None,
+                    row[3] or None,
+                    row[4] or None,
+                    filial_id,
+                    (row[6] or "S") == "S",
+                )
+            )
+
+        cur.executemany(
+            """
+            INSERT INTO vendedores_filiais (
+                id, legacy_vendedor_filial_id, vendedor_proton_id, nome, nome_abreviado,
+                cpf_cnpj, filial_proton_id, ativo
+            )
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+            """,
+            vendedores,
+        )
+
+
 def transform_auth(conn: psycopg.Connection) -> None:
     from app.core.security import get_password_hash
 
@@ -595,6 +648,8 @@ def main() -> None:
         print("caixas transformados")
         transform_titulos(conn)
         print("titulos transformados")
+        transform_vendedores_filiais(conn)
+        print("vendedores x filial transformados")
 
     print("Transformacao inicial concluida.")
 

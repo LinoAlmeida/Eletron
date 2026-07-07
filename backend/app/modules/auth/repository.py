@@ -1,4 +1,4 @@
-from sqlalchemy import or_, select
+from sqlalchemy import select
 from sqlalchemy.orm import Session, selectinload
 
 from app.modules.auth.models import Usuario, UsuarioEmpresa
@@ -17,24 +17,24 @@ class AuthRepository:
         )
         return self.db.scalar(statement)
 
-    def get_usuario_by_login(self, login: str) -> Usuario | None:
-        login_clean = login.strip()
-        login_lower = login_clean.lower()
-        cod_proton = int(login_clean) if login_clean.isdigit() else None
-
-        filters = [
-            Usuario.username == login_lower,
-            Usuario.email == login_lower,
-            Usuario.cpf == login_clean,
-            Usuario.nome.ilike(login_clean),
-        ]
-        if cod_proton is not None:
-            filters.append(Usuario.cod_proton == cod_proton)
-
+    def get_usuario_by_cod_proton(self, cod_proton: int) -> Usuario | None:
         statement = (
             select(Usuario)
             .options(selectinload(Usuario.perfil))
-            .where(Usuario.ativo.is_(True), or_(*filters))
+            .where(Usuario.ativo.is_(True), Usuario.cod_proton == cod_proton)
+            .limit(1)
+        )
+        return self.db.scalar(statement)
+
+    def get_usuario_by_login(self, login: str) -> Usuario | None:
+        login_clean = login.strip()
+        if not login_clean.isdigit():
+            return None
+        cod_proton = int(login_clean)
+        statement = (
+            select(Usuario)
+            .options(selectinload(Usuario.perfil))
+            .where(Usuario.ativo.is_(True), Usuario.cod_proton == cod_proton)
             .limit(1)
         )
         return self.db.scalar(statement)

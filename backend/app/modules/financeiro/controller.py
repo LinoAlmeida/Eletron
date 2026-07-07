@@ -4,7 +4,13 @@ from sqlalchemy.orm import Session
 from app.core.database import get_db
 from app.modules.auth.models import Usuario
 from app.modules.auth.service import get_current_user
-from app.modules.financeiro.schemas import CaixaListResponse, TituloListResponse
+from app.modules.financeiro.schemas import (
+    AbrirTurnoRequest,
+    AbrirTurnoResponse,
+    CaixaListResponse,
+    TituloListResponse,
+    TurnoAtualResponse,
+)
 from app.modules.financeiro.service import FinanceiroService
 
 router = APIRouter()
@@ -27,3 +33,20 @@ def titulos_da_reserva(
     usuario: Usuario = Depends(get_current_user),
 ) -> TituloListResponse:
     return FinanceiroService(db).titulos_da_reserva(reserva_id=reserva_id, usuario=usuario)
+
+
+@router.get("/turno-atual", response_model=TurnoAtualResponse)
+def turno_atual(
+    db: Session = Depends(get_db),
+    usuario: Usuario = Depends(get_current_user),
+) -> TurnoAtualResponse:
+    return FinanceiroService(db).turno_atual(usuario=usuario)
+
+
+@router.post("/turnos/abrir", response_model=AbrirTurnoResponse)
+def abrir_turno(
+    payload: AbrirTurnoRequest,
+    db: Session = Depends(get_db),
+    usuario: Usuario = Depends(get_current_user),
+) -> AbrirTurnoResponse:
+    return FinanceiroService(db).abrir_turno(usuario=usuario, valor_inicial=payload.valor_inicial)
