@@ -1,0 +1,1388 @@
+[
+  {
+    "file": "App_Log.csv",
+    "columns": [
+      "App_LogID",
+      "Identificador",
+      "Tipo",
+      "Status",
+      "Data",
+      "Hora",
+      "ChaveAPP"
+    ],
+    "column_count": 7,
+    "row_count": 0,
+    "size_bytes": 136
+  },
+  {
+    "file": "Colecao.csv",
+    "columns": [
+      "ColecaoID",
+      "colecao",
+      "observação"
+    ],
+    "column_count": 3,
+    "row_count": 4,
+    "size_bytes": 270
+  },
+  {
+    "file": "t000_Empresas.csv",
+    "columns": [
+      "t000_Empresa_ID",
+      "t000_Id_Proton",
+      "t000_Fantasia",
+      "t000_Cnpj",
+      "t000_Ativa",
+      "t000_SmntEletron",
+      "T012_GrupoEmpresa_ID",
+      "t000_ControlaEstoque"
+    ],
+    "column_count": 8,
+    "row_count": 12,
+    "size_bytes": 1758
+  },
+  {
+    "file": "T001_Acesso.csv",
+    "columns": [
+      "t001_Acesso_ID",
+      "t001_server",
+      "t001_user",
+      "t001_base",
+      "t001_password"
+    ],
+    "column_count": 5,
+    "row_count": 1,
+    "size_bytes": 226
+  },
+  {
+    "file": "t002_Tipos_Metas.csv",
+    "columns": [
+      "t002_tipo_meta_id",
+      "t002_meta",
+      "t002_cresci"
+    ],
+    "column_count": 3,
+    "row_count": 9,
+    "size_bytes": 570
+  },
+  {
+    "file": "t003_metas.csv",
+    "columns": [
+      "t003_meta_id",
+      "t000_empresa_id",
+      "t002_tipo_meta_id",
+      "t003_crescimento",
+      "t003_valor",
+      "t003_status",
+      "t003_compet",
+      "t003_ano"
+    ],
+    "column_count": 8,
+    "row_count": 216,
+    "size_bytes": 28548
+  },
+  {
+    "file": "t004_Hist_Venda_Mes.csv",
+    "columns": [
+      "t004_Hist_Vd_Mes_ID",
+      "t000_Id_Proton",
+      "t004_hist_Vd_Mes",
+      "T000_Empresa_ID",
+      "t004_hist_vd_Valor"
+    ],
+    "column_count": 5,
+    "row_count": 27,
+    "size_bytes": 2168
+  },
+  {
+    "file": "T005_Usuarios.csv",
+    "columns": [
+      "T005_Usuarios_ID",
+      "T005_Nome",
+      "T005_email",
+      "T005_Tel01",
+      "T005_Tel02",
+      "T005_Cpf",
+      "T005_Senha",
+      "T005_CodPronton",
+      "T005_Tipo",
+      "T005_Filial",
+      "T000_Empresa_ID"
+    ],
+    "column_count": 11,
+    "row_count": 17,
+    "size_bytes": 2288
+  },
+  {
+    "file": "T006_Impressoras.csv",
+    "columns": [
+      "T006_Impressoras_ID",
+      "T006_Nome",
+      "T006_Ip",
+      "T006_Estacao"
+    ],
+    "column_count": 4,
+    "row_count": 0,
+    "size_bytes": 116
+  },
+  {
+    "file": "T007_NiveldeUsuarios.csv",
+    "columns": [
+      "T007_NivelUsuariosID",
+      "t007_nivel"
+    ],
+    "column_count": 2,
+    "row_count": 0,
+    "size_bytes": 70
+  },
+  {
+    "file": "T008_Categorias.csv",
+    "columns": [
+      "T008_Categoria_ID",
+      "T008_IdProton",
+      "T008_Descricao"
+    ],
+    "column_count": 3,
+    "row_count": 17,
+    "size_bytes": 922
+  },
+  {
+    "file": "T009_UsuariosXEmpresas.csv",
+    "columns": [
+      "T009_UsuarioXEmpresaID",
+      "T000_Empresa_ID",
+      "T005_Usuarios_ID"
+    ],
+    "column_count": 3,
+    "row_count": 9,
+    "size_bytes": 398
+  },
+  {
+    "file": "T010_FormaPagamento.csv",
+    "columns": [
+      "T010_FormaPag_ID",
+      "t010_Forma",
+      "t010_percDesc",
+      "t010_Tipo",
+      "t010_live",
+      "t010_Pedidos"
+    ],
+    "column_count": 6,
+    "row_count": 65,
+    "size_bytes": 5744
+  },
+  {
+    "file": "T011_Ano.csv",
+    "columns": [
+      "t011_Ano_Id"
+    ],
+    "column_count": 1,
+    "row_count": 6,
+    "size_bytes": 122
+  },
+  {
+    "file": "T012_GrupoEmpresas.csv",
+    "columns": [
+      "T012_GrupoEmpresa_ID",
+      "t012_Grupo"
+    ],
+    "column_count": 2,
+    "row_count": 2,
+    "size_bytes": 122
+  },
+  {
+    "file": "T013_BaseCalculoComissao.csv",
+    "columns": [
+      "t013_BaseCalcComissao_ID",
+      "T012_GrupoEmpresa_ID",
+      "t013_MesRef",
+      "t013_BaseCalc",
+      "t013_juntaBases",
+      "t013_PercLoja",
+      "t013_QtdCorrida",
+      "t013_vlrfaix1",
+      "t013_percfaix01",
+      "t013_vlrfaix2",
+      "t013_percfaix02",
+      "t013vlrfaix3",
+      "t013_percfaix03",
+      "T008_Categoria_ID",
+      "t013_DescMax",
+      "T008_Categoria_ID1",
+      "t013_percentmax"
+    ],
+    "column_count": 17,
+    "row_count": 2,
+    "size_bytes": 962
+  },
+  {
+    "file": "T014_ClientesProton.csv",
+    "columns": [
+      "T014_Cli_ID",
+      "T014_Cli_PK",
+      "T014_Cli_Razao",
+      "T014_Cli_Fantasia",
+      "T014_Cli_Endereco",
+      "T014_Cli_Bairro",
+      "T014_Cli_Cep",
+      "T014_Cli_PontRef",
+      "T014_Cli_DDD1",
+      "T014_Cli_FonePrefixo1",
+      "T014_Cli_FoneFinal1",
+      "T014_Cli_DD2",
+      "T014_Cli_FonePrefixo2",
+      "T014_Cli_FoneFinal2",
+      "T014_Cli_Email",
+      "T014_Cli_CNPJ",
+      "T014_Cli_InsEst",
+      "T014_Cli_DataCad",
+      "T014_Cli_HoraCad",
+      "T014_Cli_Instagran",
+      "T014_Uf",
+      "T014_cidade",
+      "t014_telefone"
+    ],
+    "column_count": 23,
+    "row_count": 392,
+    "size_bytes": 172022
+  },
+  {
+    "file": "T015_Vendedores.csv",
+    "columns": [
+      "T015_Vend_Nome",
+      "T015_Vend_CPF",
+      "T015_Vend_DDD1",
+      "T015_Vend_Cel1",
+      "T015_Vend_DDD2",
+      "T015_Vend_Cel2",
+      "T015_Vend_Senha",
+      "T015_Vend_Senha1",
+      "T015_Vend_Email",
+      "T015_Vend_Tel1",
+      "t015_pix",
+      "T015_CodVend",
+      "t015_instagran",
+      "t015_senhaAlterada",
+      "t015_CNPJ"
+    ],
+    "column_count": 15,
+    "row_count": 9,
+    "size_bytes": 2484
+  },
+  {
+    "file": "T016_Mensagem.csv",
+    "columns": [
+      "T016_Mensagem_ID",
+      "t016_mensagem",
+      "t016_data",
+      "t016_Status"
+    ],
+    "column_count": 4,
+    "row_count": 36,
+    "size_bytes": 13192
+  },
+  {
+    "file": "T017_Menus.csv",
+    "columns": [
+      "T017_Menu_ID",
+      "t017_Descri",
+      "t017_Ordem"
+    ],
+    "column_count": 3,
+    "row_count": 4,
+    "size_bytes": 272
+  },
+  {
+    "file": "T018_SubMenus.csv",
+    "columns": [
+      "T017_Menu_ID",
+      "T018_SubMenusID",
+      "t018_Desc",
+      "t018_Ventana",
+      "t018_Ordem"
+    ],
+    "column_count": 5,
+    "row_count": 7,
+    "size_bytes": 542
+  },
+  {
+    "file": "T019_MetasDia.csv",
+    "columns": [
+      "T019_MetasDiaID",
+      "T000_Empresa_ID",
+      "T019_mês",
+      "T019_Meta",
+      "T019_teste"
+    ],
+    "column_count": 5,
+    "row_count": 2,
+    "size_bytes": 270
+  },
+  {
+    "file": "T020_ReservaProdutos.csv",
+    "columns": [
+      "T020_ReservaProduto_ID",
+      "T020_Data",
+      "T020_VlrTot",
+      "T020_vend_id",
+      "T020_vendedor",
+      "T020_Status",
+      "T020_FormPgt",
+      "T020_PercDesc",
+      "T020_VlrDes",
+      "T020_VlrLiq",
+      "T000_Empresa_ID",
+      "T020_Obrs",
+      "T020_MotivoCancel",
+      "T010_FormaPag_ID",
+      "T020_QtdItens",
+      "T020_Hora",
+      "T030_CaixaID",
+      "t030_Origem",
+      "T020_frete",
+      "T020_LVCliente",
+      "T020_LVWhtapp",
+      "T020_Retira",
+      "T020_OrigemDesc",
+      "T020_LVOrderPay",
+      "T020_TotalPago",
+      "T020_Troco"
+    ],
+    "column_count": 26,
+    "row_count": 35807,
+    "size_bytes": 10721382
+  },
+  {
+    "file": "T021_ItesReserva.csv",
+    "columns": [
+      "T021_ItensReserva_ID",
+      "T020_ReservaProduto_ID",
+      "T021_CodProd",
+      "T021_NomProd",
+      "T021_VlrProd",
+      "T021_Qtd",
+      "T021_Total",
+      "T021_PercDesc",
+      "T021_VlrDesc",
+      "T021_VlrFinal",
+      "T021_GrupoMerc",
+      "T021_SubGrupo",
+      "T021_DscGrupo",
+      "T021_Tamanho",
+      "T061_Produtos_ID",
+      "t021_teste",
+      "t021_mesref"
+    ],
+    "column_count": 17,
+    "row_count": 71755,
+    "size_bytes": 17110026
+  },
+  {
+    "file": "T022_Trocas.csv",
+    "columns": [
+      "T022_Trocas_ID",
+      "T020_ReservaProduto_ID",
+      "T021_ItensReserva_ID",
+      "T021_CodProd",
+      "T021_VlrFinal",
+      "t022_codtro",
+      "t022_Status",
+      "T022_Data",
+      "T022_Hora",
+      "T022_IdVendedor"
+    ],
+    "column_count": 10,
+    "row_count": 677,
+    "size_bytes": 119882
+  },
+  {
+    "file": "T030_Caixa.csv",
+    "columns": [
+      "T030_CaixaID",
+      "T030_FilialPro",
+      "T030_DataAb",
+      "T030_HorAb",
+      "T030_Usuario",
+      "T030_VlrInicial",
+      "T030_VlrFinal",
+      "T030_Status",
+      "T030_TotRS",
+      "T030_TotPix",
+      "T030_TotCre",
+      "T030_TotDeb",
+      "T030_DataFe",
+      "T030_HoraFe",
+      "T000_Empresa_ID",
+      "T030_VlrFimInfor",
+      "T030_TotRSInf",
+      "T030_TotPixInf",
+      "T030_TotCreInf",
+      "T030_TotDebInf",
+      "T030_Sangria",
+      "T030_Sangria02",
+      "T030_Sangria03",
+      "T030_Sangria04",
+      "T030_Sangria05",
+      "T005_Usuarios_ID",
+      "T005_CodPronton",
+      "T030_TotSangria",
+      "T030_LinkInf",
+      "T030_TotLink"
+    ],
+    "column_count": 30,
+    "row_count": 2094,
+    "size_bytes": 688748
+  },
+  {
+    "file": "T030_Titulo.csv",
+    "columns": [
+      "T030_Titulo_ID",
+      "T030_CaixaID",
+      "t000_Empresa_ID",
+      "T020_ReservaProduto_ID",
+      "T010_FormaPag_ID",
+      "t030_Valor",
+      "t030_qrcodeid",
+      "t030_qrcode",
+      "T030_Status",
+      "t030_Hora",
+      "T030_Data",
+      "T030_DataCanc",
+      "T030_HoraCanc",
+      "T030_DataAprov",
+      "T030_HoraAprov",
+      "T030_Impressao",
+      "t030_LVOrderPay",
+      "t030_LVDtRetorno",
+      "t030_LVHrRetorno",
+      "t030_LvError",
+      "t030_LVidAsaas",
+      "t030_LVurl",
+      "t030_LVTipo",
+      "t030_Live",
+      "t030_liqasaas",
+      "t030_qrCod",
+      "t030_CodAut",
+      "t030_CodAutPix"
+    ],
+    "column_count": 28,
+    "row_count": 33095,
+    "size_bytes": 7874826
+  },
+  {
+    "file": "T031_CondicaoVenda.csv",
+    "columns": [
+      "T031_Condicao",
+      "t000_Id_Proton",
+      "t031_nome",
+      "t031_Qtd_Parcelas",
+      "t031_descGeral",
+      "t031_Ativa",
+      "T000_Empresa_ID",
+      "t031_teste"
+    ],
+    "column_count": 8,
+    "row_count": 62,
+    "size_bytes": 7092
+  },
+  {
+    "file": "T032_ClienteXCondicao.csv",
+    "columns": [
+      "T014_Cli_PK",
+      "t000_Id_Proton",
+      "T031_Condicao"
+    ],
+    "column_count": 3,
+    "row_count": 2630,
+    "size_bytes": 105472
+  },
+  {
+    "file": "T040_VendasDiaLoja.csv",
+    "columns": [
+      "T040_VndDiaLj_ID",
+      "T040_VndUnid",
+      "T040_Fant",
+      "T040_Data",
+      "T040_Valor",
+      "T040_Qtd"
+    ],
+    "column_count": 6,
+    "row_count": 2,
+    "size_bytes": 374
+  },
+  {
+    "file": "T041_VendasDiaLojaVendedor.csv",
+    "columns": [
+      "T041_LojaVend_ID",
+      "T041_UnidPT",
+      "T041_Fantasia",
+      "T041_Data",
+      "T041_VendPT",
+      "T041_Vendedor",
+      "T041_Valor",
+      "T041_Itens",
+      "T041_Ticket",
+      "T041_PA",
+      "T041_TM"
+    ],
+    "column_count": 11,
+    "row_count": 6,
+    "size_bytes": 1320
+  },
+  {
+    "file": "T042_VendasDiaLoja.csv",
+    "columns": [
+      "T042_VndDiaLj_ID",
+      "T042_VndUnid",
+      "T042_Fant",
+      "T042_Data",
+      "T042_Valor",
+      "T042_Qtd"
+    ],
+    "column_count": 6,
+    "row_count": 1,
+    "size_bytes": 256
+  },
+  {
+    "file": "T043_VendasMesLoja.csv",
+    "columns": [
+      "T043_VndDiaLj_ID",
+      "T043_VndUnid",
+      "T043_Fant",
+      "T043_Data",
+      "T043_Valor",
+      "T043_Qtd"
+    ],
+    "column_count": 6,
+    "row_count": 1,
+    "size_bytes": 266
+  },
+  {
+    "file": "T044_VendasAnoLoja.csv",
+    "columns": [
+      "T044_VndDiaLj_ID",
+      "T044_VndUnid",
+      "T044_Fant",
+      "T044_Data",
+      "T044_Valor",
+      "T044_Qtd"
+    ],
+    "column_count": 6,
+    "row_count": 1,
+    "size_bytes": 270
+  },
+  {
+    "file": "T045_VendasMesLojaVendedor.csv",
+    "columns": [
+      "T045_LojaVend_ID",
+      "T045_UnidPT",
+      "T045_Fantasia",
+      "T045_Data",
+      "T045_VendPT",
+      "T045_Vendedor",
+      "T045_Valor",
+      "T045_Itens",
+      "T045_Ticket",
+      "T045_PA",
+      "T045_TM"
+    ],
+    "column_count": 11,
+    "row_count": 13,
+    "size_bytes": 2594
+  },
+  {
+    "file": "T046_ProdutoMaisDia.csv",
+    "columns": [
+      "T046_ProdMaisDia_ID",
+      "t046_refProton",
+      "t046_nome",
+      "t046_qtd",
+      "t046_data"
+    ],
+    "column_count": 5,
+    "row_count": 0,
+    "size_bytes": 146
+  },
+  {
+    "file": "T047_ReservaPeridoQtdProd.csv",
+    "columns": [
+      "T047_ReservaPerQtdProd_ID",
+      "T047_EmpProton",
+      "T047_EmpEletron",
+      "T047_CodProduto",
+      "T047_RefProduto",
+      "T047_NomProduto",
+      "T047_QtdProduto",
+      "T047_CodFornec",
+      "T047_Fornecedor",
+      "T047Origem",
+      "T047_Total"
+    ],
+    "column_count": 11,
+    "row_count": 580,
+    "size_bytes": 110924
+  },
+  {
+    "file": "T048_VendedoresXFilial.csv",
+    "columns": [
+      "T048_VendedoresXFilial_ID",
+      "t048_Pk_Proton",
+      "t048_nome",
+      "t048_nomAbrev",
+      "t048_CpfVend",
+      "t048_lnkFilial",
+      "t048_Ativo"
+    ],
+    "column_count": 7,
+    "row_count": 116,
+    "size_bytes": 13252
+  },
+  {
+    "file": "T049_RsvPerQtdProdConso.csv",
+    "columns": [
+      "T049_ReservaPerQtdProd_ID",
+      "T049_CodProduto",
+      "T049_RefProduto",
+      "T049_NomProduto",
+      "T049_QtdProduto",
+      "T049_CodFornec",
+      "T049_Fornecedor"
+    ],
+    "column_count": 7,
+    "row_count": 325,
+    "size_bytes": 45382
+  },
+  {
+    "file": "T050_Fornecedor.csv",
+    "columns": [
+      "T050_Fornec_ID",
+      "T050_CodForne",
+      "T050_Razao",
+      "T050_Fantasia"
+    ],
+    "column_count": 4,
+    "row_count": 1057,
+    "size_bytes": 126794
+  },
+  {
+    "file": "T050_ReservasDiaLoja.csv",
+    "columns": [
+      "T050_VndDiaLj_ID",
+      "T050_VndUnid",
+      "T050_Fant",
+      "T050_Data",
+      "T050_Valor",
+      "T050_Qtd"
+    ],
+    "column_count": 6,
+    "row_count": 0,
+    "size_bytes": 162
+  },
+  {
+    "file": "T051_GrupoMercadoria.csv",
+    "columns": [
+      "T051_GP_Mercad_ID",
+      "T051_GrupoProton",
+      "t051_DscGrupo"
+    ],
+    "column_count": 3,
+    "row_count": 17,
+    "size_bytes": 926
+  },
+  {
+    "file": "T052_ResultadoPeriodo.csv",
+    "columns": [
+      "T052_VndDiaLj_ID",
+      "T052_VndUnid",
+      "T052_Fant",
+      "T052_Data",
+      "T052_Valor",
+      "T052_Qtd",
+      "T052_Origem"
+    ],
+    "column_count": 7,
+    "row_count": 2,
+    "size_bytes": 398
+  },
+  {
+    "file": "T053_VendasDiaVendedorPeriodo.csv",
+    "columns": [
+      "T053_LojaVend_ID",
+      "T053_UnidPT",
+      "T053_Fantasia",
+      "T053_Data",
+      "T053_VendPT",
+      "T053_Vendedor",
+      "T053_Valor",
+      "T053_Itens",
+      "T053_Ticket",
+      "T053_PA",
+      "T053_TM",
+      "T053_Origem",
+      "T053_ValorEletron",
+      "T053_ValorProton"
+    ],
+    "column_count": 14,
+    "row_count": 8,
+    "size_bytes": 1870
+  },
+  {
+    "file": "T054_VendasDiaVendedorPerio.csv",
+    "columns": [
+      "T053_LojaVend_ID",
+      "T053_UnidPT",
+      "T053_Fantasia",
+      "T053_Data",
+      "T053_VendPT",
+      "T053_Vendedor",
+      "T053_Valor",
+      "T053_Itens",
+      "T053_Ticket",
+      "T053_PA",
+      "T053_TM",
+      "T053_Origem"
+    ],
+    "column_count": 12,
+    "row_count": 8,
+    "size_bytes": 1604
+  },
+  {
+    "file": "T055_VendasCategorias.csv",
+    "columns": [
+      "t055_VendasCateg_ID",
+      "t055_IdVendedor",
+      "t055_nomvendedor",
+      "t055_IdCategoria",
+      "t055_Categoria",
+      "t055_Origen",
+      "t055_FilialProton",
+      "t055_Vendas",
+      "t055_FilialEletron",
+      "t055_GrupoEmp",
+      "t055_qtd",
+      "t055_MesCal"
+    ],
+    "column_count": 12,
+    "row_count": 251,
+    "size_bytes": 43558
+  },
+  {
+    "file": "T056_VendasCategoriasIndividual.csv",
+    "columns": [
+      "t056_VendasCateg_ID",
+      "t056_IdVendedor",
+      "t056_nomvendedor",
+      "t056_IdCategoria",
+      "t056_Categoria",
+      "t056_Origen",
+      "t056_FilialProton",
+      "t056_Vendas",
+      "t056_grupoempresa",
+      "t056_qtd",
+      "t056_MesCal"
+    ],
+    "column_count": 11,
+    "row_count": 15,
+    "size_bytes": 2508
+  },
+  {
+    "file": "T057_ResultadoDescPeriodo.csv",
+    "columns": [
+      "T057_VndDiaLj_ID",
+      "T057_Unidade",
+      "T057_Fant",
+      "T057_ValorBruto",
+      "T057_Qtd",
+      "T057_Origem",
+      "t057_ValorLiquido",
+      "t057_DescGeral",
+      "t057_mediadesc"
+    ],
+    "column_count": 9,
+    "row_count": 2,
+    "size_bytes": 596
+  },
+  {
+    "file": "T058_DescontoCorrida.csv",
+    "columns": [
+      "T058_DescCorrida_ID",
+      "t058_FilialProton",
+      "t058_Idvendedor",
+      "t058_nomevendedor",
+      "t058_codproduto",
+      "t058_idgrupo",
+      "t058_grupo",
+      "t058_qtd",
+      "t058_precovenda",
+      "t058_precooriginal",
+      "t058_valorliqitem",
+      "t058_descvalor",
+      "t058_descpercent",
+      "t058_descpedidovlr",
+      "t058_descpedidopercent",
+      "t058_penctcalcitem",
+      "t058_percentcalcitempedido",
+      "t058_somapercdesconto",
+      "t058_origem"
+    ],
+    "column_count": 19,
+    "row_count": 459,
+    "size_bytes": 109294
+  },
+  {
+    "file": "T059_ResumoDia.csv",
+    "columns": [
+      "T059_ResumoDiaID",
+      "t059_Data",
+      "t059_Valor",
+      "t059_QtdVendas",
+      "t059_TotEletron",
+      "t059_TotProton",
+      "t059_QtdElet",
+      "t059_QtdProt",
+      "t029_teste",
+      "t029_teste2"
+    ],
+    "column_count": 10,
+    "row_count": 1,
+    "size_bytes": 420
+  },
+  {
+    "file": "T060_Estoque.csv",
+    "columns": [
+      "T060_Estoque_ID",
+      "t060_nome",
+      "t060_data",
+      "t060_hora",
+      "t060_iduser",
+      "t060_nomeuser",
+      "t060_Status",
+      "t000_Empresa_ID",
+      "t060_DTInicio",
+      "t060_DtFim",
+      "t060_Controla",
+      "t060_SmtPedidos",
+      "t060_Ativo"
+    ],
+    "column_count": 13,
+    "row_count": 0,
+    "size_bytes": 382
+  },
+  {
+    "file": "T061_Produtos.csv",
+    "columns": [
+      "T061_CodProton",
+      "T061_Descricao",
+      "T061_VlrProton",
+      "T061_Tamanho",
+      "T064_CorID",
+      "t064_referencia",
+      "t064_Grupo",
+      "t064_DataCad",
+      "t061_refSpls",
+      "t061_Artigo",
+      "t061_CodBarras"
+    ],
+    "column_count": 11,
+    "row_count": 4122,
+    "size_bytes": 835692
+  },
+  {
+    "file": "T062_EstoqueXProdutos.csv",
+    "columns": [
+      "T060_Estoque_ID",
+      "T062_VlrEstoque",
+      "T062_QtdEst",
+      "T062_QtdBloq",
+      "T062_QtdDisp",
+      "T061_CodProton",
+      "T064_CorID",
+      "t062_RefProton",
+      "t062_refSpls"
+    ],
+    "column_count": 9,
+    "row_count": 0,
+    "size_bytes": 282
+  },
+  {
+    "file": "T063_WhatssApp.csv",
+    "columns": [
+      "T063_WhatssAppID",
+      "T063_Sessao",
+      "T063_Token",
+      "T000_Empresa_ID"
+    ],
+    "column_count": 4,
+    "row_count": 1,
+    "size_bytes": 170
+  },
+  {
+    "file": "T064_Cor.csv",
+    "columns": [
+      "T064_CorID",
+      "t064_Cor",
+      "t064_ativa",
+      "ColecaoID",
+      "T064_refer",
+      "colecname"
+    ],
+    "column_count": 6,
+    "row_count": 119,
+    "size_bytes": 10670
+  },
+  {
+    "file": "T065_Pedidos.csv",
+    "columns": [
+      "t065_Pedido_ID",
+      "T000_Empresa_ID",
+      "t065_CodCli",
+      "t065_RazSoc",
+      "t065_DatDig",
+      "t065_HorDig",
+      "t065_DatPed",
+      "t065_Qtditem",
+      "t065_VlrItens",
+      "t065_VlrDesc",
+      "t065_vlrfFinal",
+      "T015_CodVend_PK",
+      "t065_Status",
+      "t065_PercDesc_1",
+      "t065_msgObs",
+      "T010_FormaPag_ID",
+      "T067_Prazo_Entrega_ID",
+      "t065_email",
+      "t065_marcaProp",
+      "t065_marca",
+      "T073_TipNotaID",
+      "Tt065_AtNota",
+      "t065_PercDesc_2",
+      "t065_PercDesc_3",
+      "t065_QtdProd",
+      "t065_excluido",
+      "t065_excDat",
+      "t065_enviacorte",
+      "t065_dtenviacorte",
+      "t065_enviauser",
+      "t065_enviausernome",
+      "t065_Qtdprods",
+      "ColecaoID"
+    ],
+    "column_count": 33,
+    "row_count": 308,
+    "size_bytes": 164772
+  },
+  {
+    "file": "T066_PedidoItens.csv",
+    "columns": [
+      "T066_PedidoIten_ID",
+      "T065_Pedido_ID",
+      "t066_SeqItem",
+      "t066_CodProd",
+      "t066_CodProdProton",
+      "t066_DescProd",
+      "T064_CorID",
+      "t066_DescCor",
+      "t066_VlrUnit",
+      "t066_QtdProd",
+      "t066_VlrTot",
+      "t066_Status",
+      "t066_qtdAtEst",
+      "t066_qtdAtFab",
+      "T066_RefProton",
+      "t066_Ean",
+      "t066_DescAplic",
+      "t066_CodProdProton2",
+      "t066_CodProdProton1",
+      "t066_cor_01",
+      "t066_cor_02",
+      "t066_cor_01dsc",
+      "t066_cor_02dsc",
+      "ColecaoID"
+    ],
+    "column_count": 24,
+    "row_count": 6852,
+    "size_bytes": 2270946
+  },
+  {
+    "file": "T067_PrazosEntrega.csv",
+    "columns": [
+      "T067_Prazo_Entrega_ID",
+      "t067_Prazo"
+    ],
+    "column_count": 2,
+    "row_count": 10,
+    "size_bytes": 426
+  },
+  {
+    "file": "T068_Receita.csv",
+    "columns": [
+      "T068_Receita_ID",
+      "t068_RefProd",
+      "t068_Descricao"
+    ],
+    "column_count": 3,
+    "row_count": 0,
+    "size_bytes": 98
+  },
+  {
+    "file": "T069_ReceitaItens.csv",
+    "columns": [
+      "T069_ReceitaItensID",
+      "T068_RefProd",
+      "t069_Item",
+      "t069_Quant",
+      "t069_Unidade",
+      "t069_vaio",
+      "T070_Materia_ID"
+    ],
+    "column_count": 7,
+    "row_count": 0,
+    "size_bytes": 212
+  },
+  {
+    "file": "T070_Materias.csv",
+    "columns": [
+      "T070_Materia_ID",
+      "t070_Descricao",
+      "T071_Unidade_ID"
+    ],
+    "column_count": 3,
+    "row_count": 4,
+    "size_bytes": 246
+  },
+  {
+    "file": "T071_Unidade.csv",
+    "columns": [
+      "T071_Unidade_ID",
+      "t071_Unidade"
+    ],
+    "column_count": 2,
+    "row_count": 3,
+    "size_bytes": 130
+  },
+  {
+    "file": "T072_PedEmails.csv",
+    "columns": [
+      "T072_PedEmail_ID",
+      "t072_email",
+      "t072_obrs",
+      "t072_Whats"
+    ],
+    "column_count": 4,
+    "row_count": 1,
+    "size_bytes": 194
+  },
+  {
+    "file": "T073_TipNota.csv",
+    "columns": [
+      "T073_TipNotaID",
+      "T073_Tipo"
+    ],
+    "column_count": 2,
+    "row_count": 2,
+    "size_bytes": 100
+  },
+  {
+    "file": "T074_ConfigWhats.csv",
+    "columns": [
+      "T074_Id",
+      "T074_Nome",
+      "T074_TokenPortal",
+      "T074_TokenInstancia",
+      "T074_SessaoInstancia"
+    ],
+    "column_count": 5,
+    "row_count": 1,
+    "size_bytes": 444
+  },
+  {
+    "file": "T075_Cores.csv",
+    "columns": [
+      "T075_CoresID",
+      "T075_cor"
+    ],
+    "column_count": 2,
+    "row_count": 0,
+    "size_bytes": 50
+  },
+  {
+    "file": "T080_BaseComissao.csv",
+    "columns": [
+      "t080_BaseComissão_ID",
+      "T000_Empresa_ID",
+      "t080_FilialEletron",
+      "t080_FilialProton",
+      "t080_idvendedor",
+      "t080_NomVendedor",
+      "t080_BaseProton",
+      "t080_BaseReserva",
+      "t080_BaseVirtualIPi",
+      "t080_BaseVirtualAmpla",
+      "t080_BaseMezanino",
+      "t080_BaseVestuEletron",
+      "t080_BaseComissao",
+      "t080_BaseMezaVestEle",
+      "t080_ComiLoja",
+      "t080_ComiMezVes",
+      "t080_ComiTotal",
+      "t080_MesCalculo",
+      "t080_BaseMezaVestPro",
+      "t080_BaseVestuProton",
+      "T012_GrupoEmpresa_ID"
+    ],
+    "column_count": 21,
+    "row_count": 1974,
+    "size_bytes": 428768
+  },
+  {
+    "file": "T081_BaseComissao.csv",
+    "columns": [
+      "t080_BaseComissão_ID",
+      "T000_Empresa_ID",
+      "t080_FilialEletron",
+      "t080_FilialProton",
+      "t080_idvendedor",
+      "t080_NomVendedor",
+      "t080_BaseProton",
+      "t080_BaseReserva",
+      "t080_BaseVirtualIPi",
+      "t080_BaseVirtualAmpla",
+      "t080_BaseMezanino",
+      "t080_BaseVestuEletron",
+      "t080_BaseComissao",
+      "t080_BaseMezaVestEle",
+      "t080_ComiLoja",
+      "t080_ComiMezVes",
+      "t080_ComiTotal",
+      "t080_MesCalculo",
+      "t080_BaseMezaVestPro",
+      "t080_BaseVestuProton",
+      "T012_GrupoEmpresa_ID",
+      "t080_BaseMezaVestuGeral",
+      "t080_BasedeCalculo",
+      "t080_TotalVendas01"
+    ],
+    "column_count": 24,
+    "row_count": 547,
+    "size_bytes": 177588
+  },
+  {
+    "file": "T083_LancamentoCorte.csv",
+    "columns": [
+      "T083_Lancamcorteid",
+      "t083_qtd",
+      "t083_refer",
+      "t083_IdArtigo",
+      "t083_IdCli",
+      "t083_marca",
+      "t083_dtcorte",
+      "t083_cor_02"
+    ],
+    "column_count": 8,
+    "row_count": 544,
+    "size_bytes": 50790
+  },
+  {
+    "file": "T084_LancamentoCorte.csv",
+    "columns": [
+      "T083_Lancamcorteid",
+      "t083_qtd",
+      "t083_refer",
+      "t083_IdArtigo",
+      "t083_IdCli",
+      "t083_marca",
+      "t083_dtcorte",
+      "t083_cor_02"
+    ],
+    "column_count": 8,
+    "row_count": 392,
+    "size_bytes": 35442
+  },
+  {
+    "file": "T090_corridaitens.csv",
+    "columns": [
+      "T090_corridaitensID",
+      "t090_cupom",
+      "t090_data",
+      "t090_hora",
+      "t090_sistema",
+      "t090_pontos",
+      "t090_idVend",
+      "t090_Vended",
+      "T000_Empresa_ID",
+      "t090_QCat01",
+      "t090_QCat02",
+      "t090_divisor",
+      "t000_Id_Proton",
+      "t090_idGrup",
+      "t090_Grupo",
+      "t090_qtdItem",
+      "t090_ref"
+    ],
+    "column_count": 17,
+    "row_count": 3,
+    "size_bytes": 1148
+  },
+  {
+    "file": "T091_Corridas.csv",
+    "columns": [
+      "T091_CorridasID",
+      "T091_DatIni",
+      "t091_datfim",
+      "t091_divisor",
+      "t091_meta",
+      "T012_GrupoEmpresa_ID"
+    ],
+    "column_count": 6,
+    "row_count": 0,
+    "size_bytes": 190
+  },
+  {
+    "file": "T092_CorridasPontos.csv",
+    "columns": [
+      "T092_CorridasPontosID",
+      "t092_refmes",
+      "t092_cupom",
+      "t092_IdVend",
+      "t092_Vendedor",
+      "t092_pontos"
+    ],
+    "column_count": 6,
+    "row_count": 1,
+    "size_bytes": 268
+  },
+  {
+    "file": "T101_TecnoSpeed.csv",
+    "columns": [
+      "T000_Empresa_ID",
+      "t101_token",
+      "t101_loginauth",
+      "t101_email",
+      "t101_senha"
+    ],
+    "column_count": 5,
+    "row_count": 0,
+    "size_bytes": 146
+  },
+  {
+    "file": "T102_PagBank.csv",
+    "columns": [
+      "T000_Empresa_ID"
+    ],
+    "column_count": 1,
+    "row_count": 0,
+    "size_bytes": 34
+  },
+  {
+    "file": "T201_Clientes.csv",
+    "columns": [
+      "T201_ClientesID",
+      "TEDI_SEQUENCIA",
+      "TEDI_CLIENTE_PK",
+      "TEDI_NOME",
+      "TEDI_SOBRENOME",
+      "TEDI_DATA_NASCIMENTO",
+      "TEDI_TIPO_PESSOA",
+      "TEDI_CONTRIBUINTE_ICMS",
+      "TEDI_CPF",
+      "TEDI_RG",
+      "TEDI_ORGAO",
+      "TEDI_EMAIL",
+      "TEDI_DATA_CADASTRO",
+      "TEDI_DATA_BLOQUEIO",
+      "TEDI_FONE_RESIDENCIAL",
+      "TEDI_FONE_CELULAR",
+      "TEDI_CNPJ",
+      "TEDI_RAZAO_SOCIAL",
+      "TEDI_INSCRICAO_ESTADUAL",
+      "TEDI_CODIGO_REFERENCIA",
+      "TEDI_POSSUI_FIHOS",
+      "TEDI_QUANTIDADE_FILHOS",
+      "TEDI_NOME_FILHOS",
+      "TEDI_CEP",
+      "TEDI_TIPO_LOGRADOURO",
+      "TEDI_ENDERECO",
+      "TEDI_END_NUMERO",
+      "TEDI_END_COMPLEMENTO",
+      "TEDI_BAIRRO",
+      "TEDI_NOME_CIDADE",
+      "TEDI_UF",
+      "TEDI_FLAG",
+      "TEDI_STATUS",
+      "TEDI_UNIDADE_FK",
+      "TEDI_PROCESSADO",
+      "TEDI_OCORRENCIA",
+      "t201_integrac"
+    ],
+    "column_count": 37,
+    "row_count": 1,
+    "size_bytes": 1826
+  },
+  {
+    "file": "T301_ApoioQtdItemPedido.csv",
+    "columns": [
+      "T301_ApoioQtdItemPedidoID",
+      "T301_RefProduto",
+      "T301_DescProduto",
+      "T301_Qtd"
+    ],
+    "column_count": 4,
+    "row_count": 111,
+    "size_bytes": 4694
+  },
+  {
+    "file": "T302_ApoioQtdItemPedClie.csv",
+    "columns": [
+      "T302_ApoioQtdItemPedClieID",
+      "t302_QtdItem",
+      "t302_RefProton",
+      "t302_CorID",
+      "t302_DescCor",
+      "t302_CodCli",
+      "t302_RazaoSoc",
+      "t302_cor02",
+      "t302_cor02dsc"
+    ],
+    "column_count": 9,
+    "row_count": 962,
+    "size_bytes": 170674
+  },
+  {
+    "file": "T303_TrocaApoio.csv",
+    "columns": [
+      "T303_ID",
+      "reserva",
+      "produto",
+      "descricao",
+      "quatidade",
+      "valor"
+    ],
+    "column_count": 6,
+    "row_count": 0,
+    "size_bytes": 122
+  },
+  {
+    "file": "T901_VendPorFilial.csv",
+    "columns": [
+      "T901_VendPorFilial_ID",
+      "T901_VendIdProton",
+      "T901_FilialIdProton",
+      "T901_Fantasia"
+    ],
+    "column_count": 4,
+    "row_count": 0,
+    "size_bytes": 162
+  },
+  {
+    "file": "T_Teste.csv",
+    "columns": [
+      "T_TesteID",
+      "T01",
+      "T02",
+      "T03"
+    ],
+    "column_count": 4,
+    "row_count": 0,
+    "size_bytes": 58
+  }
+]
