@@ -15,7 +15,7 @@ def listar_reservas(
     limit: int = Query(default=50, ge=1, le=200),
     offset: int = Query(default=0, ge=0),
     db: Session = Depends(get_db),
-    _usuario: Usuario = Depends(get_current_user),
+    usuario: Usuario = Depends(get_current_user),
 ) -> ReservaListResponse:
     service = ReservaService(db)
-    return service.listar(limit=limit, offset=offset)
+    return service.listar(limit=limit, offset=offset, usuario=usuario)

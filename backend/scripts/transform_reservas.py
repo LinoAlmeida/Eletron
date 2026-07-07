@@ -222,16 +222,201 @@ def transform_reserva_itens(conn: psycopg.Connection) -> None:
         )
 
 
+def transform_caixas(conn: psycopg.Connection) -> None:
+    with conn.cursor() as cur:
+        cur.execute("TRUNCATE caixas RESTART IDENTITY CASCADE")
+        cur.execute("SELECT id FROM empresas")
+        empresa_ids = {row[0] for row in cur.fetchall()}
+        cur.execute("SELECT id FROM usuarios")
+        usuario_ids = {row[0] for row in cur.fetchall()}
+
+        cur.execute(
+            """
+            SELECT
+                "T030_CaixaID",
+                "T030_FilialPro",
+                "T030_DataAb",
+                "T030_HorAb",
+                "T030_Usuario",
+                "T030_VlrInicial",
+                "T030_VlrFinal",
+                "T030_Status",
+                "T030_TotRS",
+                "T030_TotPix",
+                "T030_TotCre",
+                "T030_TotDeb",
+                "T030_DataFe",
+                "T030_HoraFe",
+                "T000_Empresa_ID",
+                "T005_Usuarios_ID",
+                "T005_CodPronton",
+                "T030_TotSangria",
+                "T030_TotLink"
+            FROM legacy.t030_caixa
+            """
+        )
+        rows = cur.fetchall()
+        caixas = []
+        for row in rows:
+            caixa_id = to_int(row[0])
+            if caixa_id is None:
+                continue
+
+            empresa_id = to_int(row[14])
+            usuario_id = to_int(row[15])
+            caixas.append(
+                (
+                    caixa_id,
+                    caixa_id,
+                    empresa_id if empresa_id in empresa_ids else None,
+                    to_int(row[1]),
+                    usuario_id if usuario_id in usuario_ids else None,
+                    row[4] or None,
+                    to_int(row[16]),
+                    to_date(row[2]),
+                    to_time(row[3]),
+                    to_date(row[12]),
+                    to_time(row[13]),
+                    row[7] or None,
+                    to_decimal(row[5]),
+                    to_decimal(row[6]),
+                    to_decimal(row[8]),
+                    to_decimal(row[9]),
+                    to_decimal(row[10]),
+                    to_decimal(row[11]),
+                    to_decimal(row[17]),
+                    to_decimal(row[18]),
+                )
+            )
+
+        cur.executemany(
+            """
+            INSERT INTO caixas (
+                id, legacy_caixa_id, empresa_id, filial_proton, usuario_id, usuario_nome,
+                cod_proton_usuario, data_abertura, hora_abertura, data_fechamento,
+                hora_fechamento, status, valor_inicial, valor_final, total_dinheiro,
+                total_pix, total_credito, total_debito, total_sangria, total_link
+            )
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            """,
+            caixas,
+        )
+
+
+def transform_titulos(conn: psycopg.Connection) -> None:
+    with conn.cursor() as cur:
+        cur.execute("TRUNCATE titulos RESTART IDENTITY")
+        cur.execute("SELECT id FROM caixas")
+        caixa_ids = {row[0] for row in cur.fetchall()}
+        cur.execute("SELECT id FROM empresas")
+        empresa_ids = {row[0] for row in cur.fetchall()}
+        cur.execute("SELECT id FROM reservas")
+        reserva_ids = {row[0] for row in cur.fetchall()}
+        cur.execute("SELECT id FROM formas_pagamento")
+        forma_pagamento_ids = {row[0] for row in cur.fetchall()}
+
+        cur.execute(
+            """
+            SELECT
+                "T030_Titulo_ID",
+                "T030_CaixaID",
+                "t000_Empresa_ID",
+                "T020_ReservaProduto_ID",
+                "T010_FormaPag_ID",
+                "t030_Valor",
+                "t030_qrcodeid",
+                "t030_qrcode",
+                "T030_Status",
+                "t030_Hora",
+                "T030_Data",
+                "T030_DataCanc",
+                "T030_HoraCanc",
+                "T030_DataAprov",
+                "T030_HoraAprov",
+                "t030_LVOrderPay",
+                "t030_LVidAsaas",
+                "t030_LVurl",
+                "t030_LVTipo",
+                "t030_CodAut",
+                "t030_CodAutPix"
+            FROM legacy.t030_titulo
+            """
+        )
+        rows = cur.fetchall()
+        titulos = []
+        for row in rows:
+            titulo_id = to_int(row[0])
+            if titulo_id is None:
+                continue
+
+            caixa_id = to_int(row[1])
+            empresa_id = to_int(row[2])
+            reserva_id = to_int(row[3])
+            forma_pagamento_id = to_int(row[4])
+            titulos.append(
+                (
+                    titulo_id,
+                    titulo_id,
+                    caixa_id if caixa_id in caixa_ids else None,
+                    empresa_id if empresa_id in empresa_ids else None,
+                    reserva_id if reserva_id in reserva_ids else None,
+                    forma_pagamento_id if forma_pagamento_id in forma_pagamento_ids else None,
+                    to_decimal(row[5]),
+                    row[8] or None,
+                    to_date(row[10]),
+                    to_time(row[9]),
+                    to_date(row[11]),
+                    to_time(row[12]),
+                    to_date(row[13]),
+                    to_time(row[14]),
+                    row[6] or None,
+                    row[7] or None,
+                    row[15] or None,
+                    row[16] or None,
+                    row[17] or None,
+                    row[18] or None,
+                    row[19] or None,
+                    row[20] or None,
+                )
+            )
+
+        cur.executemany(
+            """
+            INSERT INTO titulos (
+                id, legacy_titulo_id, caixa_id, empresa_id, reserva_id, forma_pagamento_id,
+                valor, status, data, hora, data_cancelamento, hora_cancelamento,
+                data_aprovacao, hora_aprovacao, qrcode_id, qrcode, order_pay, asaas_id,
+                url, tipo_live, cod_autorizacao, cod_autorizacao_pix
+            )
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            """,
+            titulos,
+        )
+
+
 def transform_auth(conn: psycopg.Connection) -> None:
     from app.core.security import get_password_hash
 
     with conn.cursor() as cur:
+        cur.execute(
+            """
+            SELECT legacy_usuario_id, senha_hash, senha_deve_alterar
+            FROM usuarios
+            WHERE legacy_usuario_id IS NOT NULL
+            """
+        )
+        senhas_existentes = {
+            row[0]: (row[1], row[2])
+            for row in cur.fetchall()
+        }
+
         cur.execute("TRUNCATE usuarios_empresas RESTART IDENTITY")
         cur.execute("TRUNCATE usuarios RESTART IDENTITY CASCADE")
         cur.execute("TRUNCATE perfis RESTART IDENTITY CASCADE")
 
         cur.execute('SELECT id FROM empresas')
         empresa_ids = {row[0] for row in cur.fetchall()}
+        empresa_padrao_geral = min(empresa_ids) if empresa_ids else None
 
         cur.execute(
             """
@@ -297,7 +482,14 @@ def transform_auth(conn: psycopg.Connection) -> None:
             if perfil_id not in perfil_ids:
                 perfil_id = None
             if empresa_padrao_id not in empresa_ids:
-                empresa_padrao_id = None
+                empresa_padrao_id = empresa_padrao_geral
+            senha_existente = senhas_existentes.get(usuario_id)
+            if senha_existente and senha_existente[1] is False:
+                senha_hash = senha_existente[0]
+                senha_deve_alterar = False
+            else:
+                senha_hash = get_password_hash(legacy_senha)
+                senha_deve_alterar = True
 
             usuarios.append(
                 (
@@ -307,13 +499,13 @@ def transform_auth(conn: psycopg.Connection) -> None:
                     username,
                     email,
                     cpf,
-                    get_password_hash(legacy_senha),
+                    senha_hash,
                     to_int(row[5]),
                     perfil_id,
                     to_int(row[7]),
                     empresa_padrao_id,
                     True,
-                    True,
+                    senha_deve_alterar,
                 )
             )
 
@@ -399,6 +591,10 @@ def main() -> None:
         print("reserva_itens transformados")
         transform_auth(conn)
         print("usuarios, perfis e vinculos transformados")
+        transform_caixas(conn)
+        print("caixas transformados")
+        transform_titulos(conn)
+        print("titulos transformados")
 
     print("Transformacao inicial concluida.")
 

@@ -18,7 +18,32 @@ export interface ReservaListResponse {
   items: Reserva[]
 }
 
+export interface Titulo {
+  id: number
+  legacy_titulo_id: number | null
+  caixa_id: number | null
+  empresa_id: number | null
+  reserva_id: number | null
+  forma_pagamento_id: number | null
+  valor: string | null
+  status: string | null
+  data: string | null
+  hora: string | null
+  cod_autorizacao: string | null
+  cod_autorizacao_pix: string | null
+}
+
+export interface TituloListResponse {
+  total: number
+  items: Titulo[]
+}
+
 export async function listarReservas(): Promise<ReservaListResponse> {
   const response = await api.get<ReservaListResponse>('/reservas')
+  return response.data
+}
+
+export async function listarTitulosReserva(reservaId: number): Promise<TituloListResponse> {
+  const response = await api.get<TituloListResponse>(`/financeiro/reservas/${reservaId}/titulos`)
   return response.data
 }

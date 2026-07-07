@@ -5,6 +5,7 @@ from sqlalchemy import engine_from_config, pool
 
 from app.core.database import Base
 from app.modules.auth import models as auth_models  # noqa: F401
+from app.modules.financeiro import models as financeiro_models  # noqa: F401
 from app.modules.reservas import models as reserva_models  # noqa: F401
 from app.modules.shared import models as shared_models  # noqa: F401
 

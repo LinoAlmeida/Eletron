@@ -17,6 +17,12 @@ export interface Usuario {
   senha_deve_alterar: boolean
 }
 
+export interface EmpresaAuth {
+  id: number
+  fantasia: string
+  cnpj: string | null
+}
+
 export interface LoginResponse {
   access_token: string
   token_type: string
@@ -30,5 +36,10 @@ export async function login(loginValue: string, senha: string): Promise<LoginRes
 
 export async function getMe(): Promise<Usuario> {
   const response = await api.get<Usuario>('/auth/me')
+  return response.data
+}
+
+export async function getMinhasEmpresas(): Promise<EmpresaAuth[]> {
+  const response = await api.get<EmpresaAuth[]>('/auth/empresas')
   return response.data
 }

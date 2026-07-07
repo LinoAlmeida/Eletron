@@ -49,7 +49,10 @@ async function logout() {
         </button>
         <div class="topbar-title">
           <strong>Reservas</strong>
-          <span>{{ auth.usuario?.nome || 'PDV, pedidos e historico migrado' }}</span>
+          <span>
+            {{ auth.usuario?.nome || 'PDV, pedidos e historico migrado' }}
+            <template v-if="auth.empresaAtiva"> · {{ auth.empresaAtiva.fantasia }}</template>
+          </span>
         </div>
         <button class="btn btn-outline-secondary icon-btn" type="button" aria-label="Sair" @click="logout">
           <LogOut :size="18" />
