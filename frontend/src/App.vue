@@ -22,8 +22,13 @@ async function logout() {
   <div v-else class="app-shell">
     <aside class="sidebar">
       <div class="brand">
-        <ShoppingBag :size="24" />
-        <span>Eletron</span>
+        <span class="brand-mark">
+          <ShoppingBag :size="20" />
+        </span>
+        <span>
+          <strong>Aredda</strong>
+          <small>Eletron PDV</small>
+        </span>
       </div>
 
       <nav class="nav-list">
@@ -52,7 +57,7 @@ async function logout() {
           <Menu :size="18" />
         </button>
         <div class="topbar-title">
-          <strong>Reservas</strong>
+          <strong>{{ route.name === 'pdv' ? 'PDV de Reservas' : 'Reservas' }}</strong>
           <span>
             {{ auth.usuario?.nome || 'PDV, pedidos e historico migrado' }}
             <template v-if="auth.empresaAtiva"> · {{ auth.empresaAtiva.fantasia }}</template>

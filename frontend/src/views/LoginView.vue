@@ -34,8 +34,8 @@ async function submit() {
       <div class="login-brand">
         <ShoppingBag :size="30" />
         <div>
-          <strong>Eletron</strong>
-          <span>Reservas e PDV</span>
+          <strong>Aredda</strong>
+          <span>Reservas e PDV Eletron</span>
         </div>
       </div>
 
